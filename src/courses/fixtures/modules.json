@@ -1,0 +1,29 @@
+[
+  {
+    "model": "courses.module",
+    "pk": 1,
+    "fields": {
+      "course": 1,
+      "title": "Introduction to Algebra",
+      "description": "Basic concepts of algebra"
+    }
+  },
+  {
+    "model": "courses.module",
+    "pk": 2,
+    "fields": {
+      "course": 1,
+      "title": "Linear Equations",
+      "description": "Solving linear equations"
+    }
+  },
+  {
+    "model": "courses.module",
+    "pk": 3,
+    "fields": {
+      "course": 2,
+      "title": "Newton's Laws",
+      "description": "Fundamental principles of classical mechanics"
+    }
+  }
+]

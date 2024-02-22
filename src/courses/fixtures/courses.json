@@ -1,0 +1,26 @@
+[
+  {
+    "model": "courses.course",
+    "pk": 1,
+    "fields": {
+      "owner": 1,
+      "subject": 1,
+      "title": "Algebra 101",
+      "slug": "algebra-101",
+      "overview": "Introduction to algebra",
+      "created": "2024-02-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "courses.course",
+    "pk": 2,
+    "fields": {
+      "owner": 1,
+      "subject": 2,
+      "title": "Physics Fundamentals",
+      "slug": "physics-fundamentals",
+      "overview": "Basic principles of physics",
+      "created": "2024-02-21T10:00:00Z"
+    }
+  }
+]
