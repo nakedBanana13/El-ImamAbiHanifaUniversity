@@ -6,6 +6,9 @@
     <meta charset="utf-8"/>
     <title>{% block title %}Abi Hanifah University{% endblock %}</title>
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 </head>
 <body>
 <div id="header">
@@ -24,8 +27,6 @@
     {% endblock %}
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 <script>
     $(document).ready(function () {
         {% block domready %}
