@@ -17,11 +17,11 @@
     {% endif %}
 </h1>
 <div>
-    <h2>Course info</h2>
     <form method="post">
         {{ form.as_p }}
         {% csrf_token %}
         <p><input type="submit" value="Save course"></p>
+        <button type="button" onclick="window.location.href = window.location.href;">Cancel</button>
     </form>
 </div>
 {% endblock %}

@@ -25,7 +25,7 @@ class OwnerEditMixin(object):
 
 class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin, PermissionRequiredMixin):
     model = Course  # used for querySets(used by all views)
-    fields = ['subject', 'title', 'overview']  # The fields of the model to build the model form of the CreateView
+    fields = ['subject', 'study_year', 'title', 'overview']  # The fields of the model to build the model form of the CreateView
     # and UpdateView views
 
     success_url = reverse_lazy('manage_course_list')  # redirect the user after the form is successfully submitted

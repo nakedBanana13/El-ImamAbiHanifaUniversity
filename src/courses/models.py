@@ -6,6 +6,21 @@ from django.utils.text import slugify
 from .fields import OrderField
 
 
+class Faculty(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class StudyYear(models.Model):
+    year = models.CharField(max_length=50)
+    semester = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"year: {self.year}---semester: {self.semester}"
+
+
 class Subject(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
@@ -20,8 +35,10 @@ class Subject(models.Model):
 class Course(models.Model):
     owner = models.ForeignKey(User, related_name='courses_created',
                               on_delete=models.CASCADE)  # The instructor who created this course
+    faculty = models.ForeignKey(Faculty, related_name='courses', on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, related_name='courses',
                                 on_delete=models.CASCADE)  # The subject that this course belongs to
+    study_year = models.ForeignKey(StudyYear, related_name='courses', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)  # The slug of the course. This will be used in URLs
     overview = models.TextField()
