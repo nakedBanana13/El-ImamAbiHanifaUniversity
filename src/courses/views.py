@@ -1,13 +1,15 @@
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.db.models import Count
 from django.forms import modelform_factory
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.views.generic import DetailView
 from django.views.generic.base import TemplateResponseMixin, View
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import Course, Module, Content
+from .models import Course, Module, Content, Subject
 from .forms import ModuleFormSet
 
 
@@ -25,7 +27,7 @@ class OwnerEditMixin(object):
 
 class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin, PermissionRequiredMixin):
     model = Course  # used for querySets(used by all views)
-    fields = ['subject', 'study_year', 'title', 'overview']  # The fields of the model to build the model form of the CreateView
+    fields = ['faculty', 'subject', 'study_year', 'title', 'overview']  # The fields of the model to build the model form of the CreateView
     # and UpdateView views
 
     success_url = reverse_lazy('manage_course_list')  # redirect the user after the form is successfully submitted
@@ -53,6 +55,24 @@ class CourseDeleteView(OwnerCourseMixin, DeleteView):
     permission_required = 'courses.delete_course'
 
 
+class CourseListView(TemplateResponseMixin, View):
+    model = Course
+    template_name = 'courses/course/list.html'
+
+    def get(self, request, subject=None):
+        subjects = Subject.objects.annotate(total_courses=Count('courses'))
+        courses = Course.objects.annotate(total_modules=Count('modules'))
+        if subject:
+            subject = get_object_or_404(Subject, slug=subject)
+            courses = courses.filter(subject=subject)
+        return self.render_to_response({'subjects': subjects, 'subject': subject, 'courses': courses})
+
+
+class CourseDetailView(DetailView):
+    model = Course
+    template_name = 'courses/course/detail.html'
+
+
 class CourseModuleUpdateView(TemplateResponseMixin, View):
     """handles adding, updating, and  deleting modules for a specific course"""
     template_name = 'courses/manage/module/formset.html'
@@ -78,6 +98,7 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
             formset.save()
             return redirect('manage_course_list')
         return self.render_to_response({'course': self.course, 'formset': formset})
+
 
 class ContentCreateUpdateView(TemplateResponseMixin, View):
     """allows to create and update different models' contents"""
