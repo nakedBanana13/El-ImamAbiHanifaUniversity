@@ -1,18 +1,8 @@
-from courses.models import Faculty, StudyYear
 from django import forms
-
-from .models import CustomUser, Instructor
-
-
-class MultiFileInput(forms.ClearableFileInput):
-    template_name = 'widgets/multiple_file_input.html'
-
 from django.forms.widgets import ClearableFileInput
+from .models import Instructor, CustomUser
+from courses.models import Faculty, StudyYear
 
-
-from django.template.loader import render_to_string
-
-from django.forms.widgets import ClearableFileInput
 
 class PhotoThumbnailWidget(ClearableFileInput):
     template_name = 'widgets/photo_thumbnail_widget.html'
@@ -27,9 +17,8 @@ class PhotoThumbnailWidget(ClearableFileInput):
         return context
 
 
-
-
-
+class MultiFileInput(forms.ClearableFileInput):
+    template_name = 'widgets/multiple_file_input.html'
 
 
 class MultiFileField(forms.FileField):
@@ -64,10 +53,6 @@ class StudentRegistrationForm(forms.ModelForm):
                     raise forms.ValidationError("File size exceeds 10MB limit")
         return documents
 
-
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import Instructor, CustomUser
 
 class InstructorAdminForm(forms.ModelForm):
     class Meta:
@@ -135,7 +120,8 @@ class InstructorAdminForm(forms.ModelForm):
             # Set the password if provided
             if self.cleaned_data['password']:
                 user.set_password(self.cleaned_data['password'])
-            user.save()
+                user.save()
+
             # Associate the newly created user with the instructor
             instructor.user = user
 

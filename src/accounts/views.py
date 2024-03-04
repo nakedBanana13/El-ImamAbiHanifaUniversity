@@ -1,13 +1,10 @@
 import os
-
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.files.base import ContentFile
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView, FormView, UpdateView
 from .models import CustomUser, Student, Document
@@ -165,4 +162,3 @@ class ServePhotoView(View):
                     response = HttpResponse(f.read(), content_type='image/jpeg')
                     return response
         return HttpResponseNotFound("Photo not found")
-
