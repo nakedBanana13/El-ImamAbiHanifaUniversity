@@ -1,0 +1,11 @@
+{% load static %}
+
+<div class="photo-thumbnail-widget">
+  {% if username %}
+    <img src="{% url 'serve_photo' username=username %}" alt="Photo" class="current-photo">
+  {% endif %}
+  <label class="upload-label">
+    <input type="file" name="{{ widget.name }}" class="photo-upload-input">
+    {{ input_text }}
+  </label>
+</div>

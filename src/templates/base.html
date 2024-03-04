@@ -15,9 +15,10 @@
     <a href="/" class="logo">Abi Hanifah University LOGO</a>
     <ul class="menu">
       {% if request.user.is_authenticated %}
-        <li><a href="{% url "logout" %}">Sign out</a></li>
+        <li><a href="{% url 'logout' %}">Sign out</a></li>
       {% else %}
-        <li><a href="{% url "login" %}">Sign in</a></li>
+        <a href="{% url 'register' %}">Sign up</a>
+        <li><a href="{% url 'login' %}">Sign in</a></li>
       {% endif %}
     </ul>
 </div>

@@ -1,7 +1,7 @@
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.text import slugify
 from .fields import OrderField
 
@@ -33,7 +33,7 @@ class Subject(models.Model):
 
 
 class Course(models.Model):
-    owner = models.ForeignKey(User, related_name='courses_created',
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='courses_created',
                               on_delete=models.CASCADE)  # The instructor who created this course
     faculty = models.ForeignKey(Faculty, related_name='courses', on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, related_name='courses',
@@ -83,7 +83,7 @@ class Content(models.Model):
 
 
 class ItemBase(models.Model):
-    owner = models.ForeignKey(User,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               related_name='%(class)s_related',
                               on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
@@ -111,4 +111,4 @@ class Image(ItemBase):
 
 class Video(ItemBase):
     url = models.URLField(blank=False)
-    #video_file = models.FileField(upload_to='videos', blank=True, null=True)
+    # video_file = models.FileField(upload_to='videos', blank=True, null=True)
