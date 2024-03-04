@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import Group
 from django.forms.widgets import ClearableFileInput
 from .models import Instructor, CustomUser
 from courses.models import Faculty, StudyYear
@@ -124,6 +125,8 @@ class InstructorAdminForm(forms.ModelForm):
 
             # Associate the newly created user with the instructor
             instructor.user = user
+            group = Group.objects.get(name='Instructors')
+            user.groups.add(group)
 
         # If the instructor instance already exists and is being updated
         else:
