@@ -1,4 +1,3 @@
-from courses.models import Faculty, StudyYear
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
@@ -20,8 +19,8 @@ class CustomUser(AbstractUser):
 
 class Student(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
-    study_year = models.ForeignKey(StudyYear, on_delete=models.CASCADE)
+    faculty = models.ForeignKey('courses.Faculty', on_delete=models.CASCADE)
+    study_year = models.ForeignKey('courses.StudyYear', on_delete=models.CASCADE)
 
 
 class Instructor(models.Model):

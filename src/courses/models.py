@@ -1,3 +1,4 @@
+from accounts.models import Instructor
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -33,7 +34,7 @@ class Subject(models.Model):
 
 
 class Course(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='courses_created',
+    owner = models.ForeignKey(Instructor, related_name='courses_created',
                               on_delete=models.CASCADE)  # The instructor who created this course
     faculty = models.ForeignKey(Faculty, related_name='courses', on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, related_name='courses',
@@ -44,6 +45,8 @@ class Course(models.Model):
     overview = models.TextField()
     created = models.DateTimeField(
         auto_now_add=True)  # The date and time when the course was created (automatically set)
+    from accounts.models import Student
+    students = models.ManyToManyField(Student, related_name='courses_joined', blank=True)
 
     class Meta:
         ordering = ['-created']
@@ -83,7 +86,7 @@ class Content(models.Model):
 
 
 class ItemBase(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+    owner = models.ForeignKey(Instructor,
                               related_name='%(class)s_related',
                               on_delete=models.CASCADE)
     title = models.CharField(max_length=250)
@@ -102,11 +105,11 @@ class Text(ItemBase):
 
 
 class File(ItemBase):
-    file = models.FileField(upload_to='files')
+    file = models.FileField()
 
 
 class Image(ItemBase):
-    file = models.FileField(upload_to='images')
+    file = models.FileField()
 
 
 class Video(ItemBase):

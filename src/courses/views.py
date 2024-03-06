@@ -1,10 +1,17 @@
+import logging
+import os
+
+from accounts.models import Instructor
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count
 from django.forms import modelform_factory
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 from django.views.generic import DetailView
 from django.views.generic.base import TemplateResponseMixin, View
 from django.views.generic.list import ListView
@@ -16,12 +23,12 @@ from .forms import ModuleFormSet
 class OwnerMixin(object):
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(owner=self.request.user)
+        return qs.filter(owner=self.request.user.instructor)
 
 
 class OwnerEditMixin(object):
     def form_valid(self, form):
-        form.instance.owner = self.request.user
+        form.instance.owner = self.request.user.instructor
         return super().form_valid(form)
 
 
@@ -41,9 +48,38 @@ class ManageCourseListView(OwnerCourseMixin, ListView):
     template_name = 'courses/manage/course/list.html'
     permission_required = 'courses.view_course'
 
+    def get_queryset(self):
+        # Retrieve the instructor associated with the logged-in user
+        instructor = self.request.user.instructor
+
+        # Filter courses by the instructor
+        queryset = Course.objects.filter(owner=instructor)
+
+        return queryset
+
 
 class CourseCreateView(OwnerCourseEditMixin, CreateView):
     permission_required = 'courses.add_course'
+
+    def form_valid(self, form):
+        # Assign the current user as the owner of the course
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            print(f"User '{user.username}' is authenticated.")
+
+            instructor = get_object_or_404(Instructor, user=user)
+            print(f"Retrieved Instructor instance for user '{user.username}'.")
+
+            course = form.save(commit=False)
+            course.owner = instructor
+            course.save()
+            print(f"Course saved with owner '{instructor.user.username}'.")
+
+            return redirect('manage_course_list')
+        else:
+            # Redirect the user to the login page if they're not authenticated
+            print("User is not authenticated. Redirecting to login page.")
+            return redirect('login')
 
 
 class CourseUpdateView(OwnerCourseEditMixin, UpdateView):
@@ -84,7 +120,7 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
     """attempts to delegate to a lowercase method  that matches the HTTP method used. A GET request is delegated to the 
        get() method and a POST request to post() """
     def dispatch(self, request, pk):
-        self.course = get_object_or_404(Course, id=pk, owner=request.user)
+        self.course = get_object_or_404(Course, id=pk, owner=request.user.instructor)
         return super().dispatch(request, pk)
 
     def get(self, request, *args, **kwargs):
@@ -118,10 +154,10 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
         return Form(*args, **kwargs)
 
     def dispatch(self, request, module_id, model_name, id=None):
-        self.module = get_object_or_404(Module, id=module_id, course__owner=request.user)
+        self.module = get_object_or_404(Module, id=module_id, course__owner=request.user.instructor)
         self.model = self.get_model(model_name)
         if id:
-            self.obj = get_object_or_404(self.model, id=id, owner=request.user)
+            self.obj = get_object_or_404(self.model, id=id, owner=request.user.instructor)
         return super().dispatch(request, module_id, model_name, id)
 
     def get(self, request, module_id, model_name, id=None):
@@ -132,8 +168,29 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
         form = self.get_form(self.model, instance=self.obj, data=request.POST, files=request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
-            obj.owner = request.user
+            obj.owner = request.user.instructor
             obj.save()
+
+            if model_name == 'file' or model_name == 'image':
+                file_instance = obj  # Assuming 'obj' is the File instance
+                course = self.module.course
+                faculty_name = course.faculty.name
+                subject_name = course.subject.title
+                instructor_name = request.user.username
+                # Generate the directory path
+                directory_path = os.path.join(settings.MEDIA_ROOT, 'courses_files', faculty_name, subject_name, instructor_name, model_name + "s")
+                # Ensure the directory exists
+                os.makedirs(directory_path, exist_ok=True)
+                # Get the filename and its extension
+                base_name, extension = os.path.splitext(file_instance.file.name)
+                # Slugify the base name and concatenate with the extension
+                file_slug = f"{slugify(base_name)}{extension}"
+                # Save the file to the appropriate directory
+                file_path = os.path.join(directory_path, file_slug)
+                with open(file_path, 'wb+') as destination:
+                    for chunk in file_instance.file.chunks():
+                        destination.write(chunk)
+
             if not id:
                 Content.objects.create(module=self.module, item=obj)
             return redirect('module_content_list', self.module.id)
@@ -144,7 +201,7 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
 class ContentDeleteView(View):
 
     def post(self, request, id):
-        content = get_object_or_404(Content, id=id, module__course__owner=request.user)
+        content = get_object_or_404(Content, id=id, module__course__owner=request.user.instructor)
         module = content.module
         content.item.delete()
         content.delete()
@@ -155,19 +212,19 @@ class ModuleContentListView(TemplateResponseMixin, View):
     template_name = 'courses/manage/module/content_list.html'
 
     def get(self, request, module_id):
-        module = get_object_or_404(Module, id=module_id, course__owner=request.user)
+        module = get_object_or_404(Module, id=module_id, course__owner=request.user.instructor)
         return self.render_to_response({'module': module})
 
 
 class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
-            Module.objects.filter(id=id, course__owner=request.user).update(order=order)
+            Module.objects.filter(id=id, course__owner=request.user.instructor).update(order=order)
         return self.render_json_response({'saved': 'OK'})
 
 
 class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
-            Content.objects.filter(id=id, module__course__owner=request.user).update(order=order)
+            Content.objects.filter(id=id, module__course__owner=request.user.instructor).update(order=order)
         return self.render_json_response({'saved': 'OK'})
