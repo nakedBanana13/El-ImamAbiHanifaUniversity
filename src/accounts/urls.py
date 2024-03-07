@@ -1,4 +1,4 @@
-from .views import StudentRegistrationView, RegistrationDoneView, StudentDashboardView, StudentUpdateView, CustomLoginView
+from .views import StudentRegistrationView, RegistrationDoneView, CustomLoginView
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
@@ -14,6 +14,5 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('register/', StudentRegistrationView.as_view(), name='register'),
     path('registration/done/', RegistrationDoneView.as_view(), name='registration_done'),
-    path('dashboard/', StudentDashboardView.as_view(), name='dashboard'),
-    path('student/edit/', StudentUpdateView.as_view(), name='student_edit'),
+    #path('dashboard/', StudentCourseListView.as_view(), name='dashboard'),
 ]

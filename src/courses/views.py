@@ -168,28 +168,28 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
         form = self.get_form(self.model, instance=self.obj, data=request.POST, files=request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
+
+            #if model_name == 'file' or model_name == 'image':
+            #    file_instance = obj  # Assuming 'obj' is the File instance
+            #    course = self.module.course
+            #    faculty_name = course.faculty.name
+            #    subject_name = course.subject.title
+            #    instructor_name = request.user.username
+            #    # Generate the directory path
+            #    directory_path = os.path.join(settings.MEDIA_ROOT, 'courses_files', faculty_name, subject_name, instructor_name, model_name + "s")
+            #    # Ensure the directory exists
+            #    os.makedirs(directory_path, exist_ok=True)
+            #    # Get the filename and its extension
+            #    base_name, extension = os.path.splitext(file_instance.file.name)
+            #    # Slugify the base name and concatenate with the extension
+            #    file_slug = f"{slugify(base_name)}{extension}"
+            #    # Save the file to the appropriate directory
+            #    file_path = os.path.join(directory_path, file_slug)
+            #    with open(file_path, 'wb+') as destination:
+            #        for chunk in file_instance.file.chunks():
+            #            destination.write(chunk)
             obj.owner = request.user.instructor
             obj.save()
-
-            if model_name == 'file' or model_name == 'image':
-                file_instance = obj  # Assuming 'obj' is the File instance
-                course = self.module.course
-                faculty_name = course.faculty.name
-                subject_name = course.subject.title
-                instructor_name = request.user.username
-                # Generate the directory path
-                directory_path = os.path.join(settings.MEDIA_ROOT, 'courses_files', faculty_name, subject_name, instructor_name, model_name + "s")
-                # Ensure the directory exists
-                os.makedirs(directory_path, exist_ok=True)
-                # Get the filename and its extension
-                base_name, extension = os.path.splitext(file_instance.file.name)
-                # Slugify the base name and concatenate with the extension
-                file_slug = f"{slugify(base_name)}{extension}"
-                # Save the file to the appropriate directory
-                file_path = os.path.join(directory_path, file_slug)
-                with open(file_path, 'wb+') as destination:
-                    for chunk in file_instance.file.chunks():
-                        destination.write(chunk)
 
             if not id:
                 Content.objects.create(module=self.module, item=obj)

@@ -33,12 +33,14 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'courses.apps.CoursesConfig',
     'accounts.apps.AccountsConfig',
+    'students.apps.StudentsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'embed_video'
 ]
 
 MIDDLEWARE = [
@@ -128,3 +130,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

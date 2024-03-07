@@ -28,7 +28,6 @@ class Instructor(models.Model):
 
 
 def user_directory_path(instance, filename):
-    # File will be uploaded to MEDIA_ROOT/documents/<username>/<filename>
     return f"documents/{instance.user.username}/{filename}"
 
 

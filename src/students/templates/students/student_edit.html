@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <h1>Edit Student Details</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <label>Photo:</label>
+            {% if form.instance.user.photo %}
+                <img src="{{ request.scheme }}://{{ request.get_host }}{% url 'serve_photo' username=form.instance.user.username %}" alt="Current Photo" style="max-width: 200px; max-height: 200px;">
+                <input type="checkbox" name="clear_photo" id="id_clear_photo"> <label>Clear Photo</label>
+            {% endif %}
+            <input type="file" name="photo">
+        </div>
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+<a href="{% url 'password_change' %}">Change Password</a>
+
+
+{% endblock %}
