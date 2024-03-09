@@ -27,6 +27,7 @@ urlpatterns = [
     path('account/', include('accounts.urls')),
     path('course/', include('courses.urls')),
     path('student/', include('students.urls')),
+    path('exam/', include('exams.urls')),
     path('documents/<str:username>/<int:document_id>/', ServeDocumentView.as_view(), name='serve_document'),
     path('<str:username>/profile_pic/', ServePhotoView.as_view(), name='serve_photo'),
     path('', CourseListView.as_view(), name='course_list'),

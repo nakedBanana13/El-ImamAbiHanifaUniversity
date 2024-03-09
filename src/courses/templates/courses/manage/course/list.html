@@ -16,6 +16,7 @@
           {% if course.modules.count > 0 %}
             <a href="{% url 'module_content_list' course.modules.first.id %}"> Manage content</a>
           {% endif %}
+          <a href="{% url 'question_list' course.id %}">Questions Bank</a>
         </p>
       </div>
     {% empty %}
