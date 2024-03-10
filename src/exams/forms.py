@@ -1,7 +1,11 @@
+from accounts.models import Instructor
+from courses.models import Course, Module
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, BaseInlineFormSet
-from .models import Question, Choice
+from django.utils import timezone
+
+from .models import Question, Choice, QuestionBank, Exam
 
 
 class QuestionForm(forms.ModelForm):
@@ -42,3 +46,20 @@ ChoiceFormSet = inlineformset_factory(
     validate_min=True,
     validate_max=True,
     formset=BaseChoiceFormSet)
+
+
+class ExamForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        question_bank = kwargs.pop('question_bank', None)
+        super().__init__(*args, **kwargs)
+        if question_bank:
+            # Filter modules based on the question bank
+            self.fields['modules'].queryset = question_bank.course.modules.all()
+
+    class Meta:
+        model = Exam
+        fields = ['modules', 'number_of_questions', 'duration_hours', 'scheduled_datetime']
+        widgets = {
+            'modules': forms.CheckboxSelectMultiple(),
+            'scheduled_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'})
+        }

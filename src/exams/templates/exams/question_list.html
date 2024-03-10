@@ -16,4 +16,5 @@
         {% endfor %}
     </ul>
     <a href="{% url 'question_add' question_bank_id=question_bank_id %}">Add Question</a>
+    <a href="{% url 'generate_exam_from_question_bank' question_bank_id=question_bank_id %}">Create Exam</a>
 {% endblock %}

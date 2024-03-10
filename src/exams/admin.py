@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import QuestionBank, Question, Choice, Exam
+from .models import QuestionBank, Question, Choice, Exam, ExamQuestion, ExamChoice
 
 
 class ChoiceInline(admin.TabularInline):
@@ -31,3 +31,14 @@ class ExamAdmin(admin.ModelAdmin):
     def get_modules(self, obj):
         return ", ".join([module.title for module in obj.modules.all()])
     get_modules.short_description = 'Modules'
+
+
+@admin.register(ExamQuestion)
+class ExamQuestionAdmin(admin.ModelAdmin):
+    list_display = ['exam', 'question']
+
+
+@admin.register(ExamChoice)
+class ExamChoiceAdmin(admin.ModelAdmin):
+    list_display = ['exam_question', 'choice_text', 'is_correct']
+    list_filter = ['exam_question', 'is_correct']

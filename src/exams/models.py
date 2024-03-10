@@ -64,18 +64,19 @@ class Exam(models.Model):
     def __str__(self):
         return f"Exam - Scheduled at {self.scheduled_datetime}"
 
-    def generate_questions(self):
-        """
-        Method to generate questions for the exam from selected modules.
-        """
-        questions = []
-        for module in self.modules.all():
-            module_questions = Question.objects.filter(module=module).order_by('?')[:self.number_of_questions]
-            questions.extend(module_questions)
-        return questions
-
     def is_accessible(self):
         """
         Method to check if the exam is accessible based on its scheduled datetime.
         """
         return timezone.now() < self.scheduled_datetime + timezone.timedelta(hours=self.duration_hours)
+
+
+class ExamQuestion(models.Model):
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='exam_questions')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='exam_questions')
+
+
+class ExamChoice(models.Model):
+    exam_question = models.ForeignKey(ExamQuestion, on_delete=models.CASCADE, related_name='exam_choices')
+    choice_text = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
