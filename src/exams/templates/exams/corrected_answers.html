@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Corrected Answers</title>
+</head>
+<body>
+    <h1>Corrected Answers</h1>
+    <ul>
+        {% for answer in answered_questions %}
+            <li>
+                <strong>Question:</strong> {{ answer.exam_question.question.question_text }}<br>
+                <strong>Your Answer:</strong> {{ answer.selected_choice.choice_text }}<br>
+                <strong>Correct Answer:</strong>
+                {% for key, value in correct_answers.items %}
+                    {% if key == answer.exam_question.id %}
+                        {{ value.choice_text }}
+                    {% endif %}
+                {% endfor %}
+            </li>
+        {% endfor %}
+    </ul>
+<h3>{{ total_marks_obtained }}</h3>
+</body>
+</html>

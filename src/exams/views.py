@@ -1,11 +1,15 @@
 import random
 from courses.models import Course
+from django.db import transaction
+from django.db.models import Sum
 from django.http import HttpResponseRedirect
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import get_object_or_404, render
-from .models import QuestionBank, Question, Exam, ExamQuestion, ExamChoice, Choice
-from .forms import QuestionForm, ChoiceFormSet, ExamForm
+from django.shortcuts import get_object_or_404, render, redirect
+from .models import QuestionBank, Question, Exam, ExamQuestion, ExamChoice, Choice, ExamToken, StudentAnswer
+from .forms import QuestionForm, ChoiceFormSet, ExamForm, ExamSubmissionForm
+from .tasks import schedule_exam_task
 
 
 class QuestionListView(ListView):
@@ -137,6 +141,11 @@ class CreateExamFromQuestionBankView(CreateView):
     form_class = ExamForm
     template_name = 'exams/create_exam.html'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.selected_modules = []
+        self.selected_questions_ids = []
+
     def get_success_url(self):
         question_bank_id = self.kwargs.get('question_bank_id')
         question_bank = get_object_or_404(QuestionBank, pk=question_bank_id)
@@ -151,80 +160,106 @@ class CreateExamFromQuestionBankView(CreateView):
         return kwargs
 
     def form_valid(self, form):
-        # Extract form data
-        selected_modules = form.cleaned_data['modules']
-        number_of_questions = form.cleaned_data['number_of_questions']
-        scheduled_datetime = form.cleaned_data['scheduled_datetime']
-        duration_hours = form.cleaned_data['duration_hours']
-
-        # Fetching questions
-        question_bank_id = self.kwargs.get('question_bank_id')
-        questions = Question.objects.filter(module__in=selected_modules, question_bank_id=question_bank_id)
-
-        # Ensure there are enough questions available
-        if questions.count() < number_of_questions:
-            form.add_error('number_of_questions', 'Not enough questions available.')
-
-            # Pass form instance to the template context
-            return self.render_to_response(self.get_context_data(form=form))
-
-        # Shuffle questions and select required number of questions
-        selected_questions = random.sample(list(questions), number_of_questions)
-
-        # Prepare data for preview
-        context = {
-            'form': form,  # Pass the form instance to the template context
-            'modules': selected_modules,
-            'number_of_questions': number_of_questions,
-            'scheduled_datetime': scheduled_datetime,
-            'duration_hours': duration_hours,
-            'questions': selected_questions,
-        }
-
-        return render(self.request, 'exams/preview_exam.html', context)
-
-    def post(self, request, *args, **kwargs):
-        if 'confirm' in request.POST:
-            form = self.get_form()
+        if 'generate' in self.request.POST:
+            # Handle generating questions
             if form.is_valid():
-                question_bank_id = self.kwargs.get('question_bank_id')
-                selected_modules = form.cleaned_data['modules']
+                self.selected_modules = form.cleaned_data['modules']
                 number_of_questions = form.cleaned_data['number_of_questions']
-
-                # Fetch all questions associated with the selected modules and the chosen question bank
-                questions = Question.objects.filter(module__in=selected_modules, question_bank_id=question_bank_id)
-
-                # Ensure there are enough questions available
+                question_bank_id = self.kwargs.get('question_bank_id')
+                questions = Question.objects.filter(module__in=self.selected_modules, question_bank_id=question_bank_id)
                 if questions.count() < number_of_questions:
                     form.add_error('number_of_questions', 'Not enough questions available.')
                     return self.form_invalid(form)
-
-                # Shuffle the questions and select the required number of questions
                 selected_questions = random.sample(list(questions), number_of_questions)
 
-                # Create the exam instance without saving it yet
+                # Store question IDs in the session
+                self.selected_questions_ids = [question.id for question in selected_questions]
+                self.request.session['selected_questions_ids'] = self.selected_questions_ids
+
+                # Render the form with generated questions
+                context = {
+                    'form': form,
+                    'modules': self.selected_modules,
+                    'number_of_questions': number_of_questions,
+                    'questions': selected_questions,
+                }
+                return render(self.request, 'exams/create_exam.html', context)
+
+        elif 'confirm' in self.request.POST:
+            # Handle saving the exam
+            if form.is_valid():
                 exam = form.save(commit=False)
-
-                # Save the exam instance
                 exam.save()
-
-                # Assign selected modules to the exam instance using set() method
+                selected_modules = form.cleaned_data['modules']
                 exam.modules.set(selected_modules)
-                # Save selected questions for the exam
+
+                # Retrieve selected question IDs from the session
+                selected_questions_ids = self.request.session.get('selected_questions_ids', [])
+                selected_questions = Question.objects.filter(id__in=selected_questions_ids)
+                marks_per_question = exam.total_marks / len(selected_questions)
                 for question in selected_questions:
-                    exam_question = ExamQuestion.objects.create(exam=exam, question=question)
-                    # Fetch choices for the current question
+                    exam_question = ExamQuestion.objects.create(exam=exam, question=question, mark=marks_per_question)
                     choices = Choice.objects.filter(question=question)
-                    # Associate choices with the exam question
                     for choice in choices:
                         ExamChoice.objects.create(exam_question=exam_question,
                                                   choice_text=choice.choice_text,
                                                   is_correct=choice.is_correct)
-
+                schedule_exam_task.apply_async(args=[exam.id], eta=exam.scheduled_datetime)
+                self.request.session.flush()
                 return HttpResponseRedirect(self.get_success_url())
 
-        elif 'edit' in request.POST:
-            return super().get(request, *args, **kwargs)
+        # Render the form initially or with validation errors
+        return super().form_invalid(form)
 
-        # Return a response using the default behavior of CreateView
-        return super().post(request, *args, **kwargs)
+
+class ExamView(View):
+    def get(self, request, token):
+        exam_token = get_object_or_404(ExamToken, token=token, used=False)
+
+        # Ensure exam is accessible
+        if not exam_token.exam.is_accessible():
+            return render(request, 'exams/invalid_exam.html')
+
+        exam_questions = ExamQuestion.objects.filter(exam=exam_token.exam)
+        form = ExamSubmissionForm(exam_questions=exam_questions)
+        return render(request, 'exams/exam.html', {'exam_token': exam_token, 'form': form})
+
+    def post(self, request, token):
+        exam_token = get_object_or_404(ExamToken, token=token, used=False)
+
+        # Ensure exam is accessible
+        if not exam_token.exam.is_accessible():
+            return render(request, 'exams/invalid_exam.html')
+
+        exam_questions = ExamQuestion.objects.filter(exam=exam_token.exam)
+        exam_questions_mark = exam_questions[0].mark
+        with transaction.atomic():
+            # Save student's answers
+            for exam_question in exam_questions:
+                choice_id = request.POST.get(f'question_{exam_question.id}', None)
+                if choice_id:
+                    selected_choice = get_object_or_404(ExamChoice, id=choice_id)
+                    StudentAnswer.objects.create(student=request.user.student, exam_question=exam_question, exam=exam_token.exam,
+                                                 selected_choice=selected_choice, mark_obtained=exam_questions_mark if selected_choice.is_correct else 0)
+
+        # Mark the token as used
+        exam_token.used = True
+        exam_token.save()
+
+        return redirect('display_corrected_answers', token=token)
+
+
+class DisplayCorrectedAnswersView(View):
+    def get(self, request, token):
+        exam_token = get_object_or_404(ExamToken, token=token)
+        answered_questions = StudentAnswer.objects.filter(student=request.user.student,
+                                                          exam=exam_token.exam)
+
+        correct_answers = {}
+        for answer in answered_questions:
+            correct_answers[answer.exam_question.id] = ExamChoice.objects.filter(exam_question=answer.exam_question,
+                                                                                 is_correct=True).first()
+
+        total_marks_obtained = answered_questions.aggregate(total_marks=Sum('mark_obtained'))['total_marks']
+        return render(request, 'exams/corrected_answers.html',
+                      {'answered_questions': answered_questions, 'correct_answers': correct_answers, 'total_marks_obtained': total_marks_obtained})

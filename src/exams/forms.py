@@ -1,17 +1,13 @@
-from accounts.models import Instructor
-from courses.models import Course, Module
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, BaseInlineFormSet
-from django.utils import timezone
-
-from .models import Question, Choice, QuestionBank, Exam
+from .models import Question, Choice, Exam
 
 
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['module', 'question_text', 'mark']
+        fields = ['module', 'question_text']
 
     def __init__(self, *args, question_bank=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,8 +54,22 @@ class ExamForm(forms.ModelForm):
 
     class Meta:
         model = Exam
-        fields = ['modules', 'number_of_questions', 'duration_hours', 'scheduled_datetime']
+        fields = ['modules', 'number_of_questions', 'duration_hours', 'scheduled_datetime', 'total_marks']
         widgets = {
             'modules': forms.CheckboxSelectMultiple(),
             'scheduled_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'})
         }
+
+
+class ExamSubmissionForm(forms.Form):
+    def __init__(self, exam_questions, *args, **kwargs):
+        super(ExamSubmissionForm, self).__init__(*args, **kwargs)
+
+        # Populate form fields dynamically based on exam questions
+        for exam_question in exam_questions:
+            # Get all choices for the current question
+            choices = [(choice.id, choice.choice_text) for choice in exam_question.exam_choices.all()]
+            question_text = exam_question.question.question_text
+            self.fields[f'question_{exam_question.id}'] = forms.ChoiceField(label=question_text,
+                                                                            choices=choices,
+                                                                            widget=forms.RadioSelect)

@@ -9,7 +9,17 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Create Exam</button>
+        <button type="submit" name="generate" value="generate">Generate Questions</button>
+        <button type="submit" name="confirm" value="confirm">Create Exam</button>
     </form>
+
+    {% if questions %}
+    <h2>Generated Questions:</h2>
+    <ul>
+        {% for question in questions %}
+            <li>{{ question.question_text }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 </body>
 </html>
