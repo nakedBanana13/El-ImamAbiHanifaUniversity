@@ -37,13 +37,15 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'students.apps.StudentsConfig',
     'exams.apps.ExamsConfig',
+    'chat.apps.ChatConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'embed_video'
+    'embed_video',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -136,3 +138,13 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+ASGI_APPLICATION = 'ElImamAbiHanifaUniversity.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
