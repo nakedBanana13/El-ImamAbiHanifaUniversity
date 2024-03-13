@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Create Module{% endblock %}
+
+{% block content %}
+  <h1>Create Module</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="action" value="save">Save</button>
+    <button type="submit" name="action" value="save_and_add_another">Save and Add Another</button>
+    <a href="{% url 'course_module_update' course_id %}"><button type="button">Cancel</button></a>
+  </form>
+{% endblock %}

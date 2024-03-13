@@ -12,8 +12,8 @@
         {% csrf_token %}
 
         <a href="{% url 'manage_course_list' %}"><button type="button">Cancel</button></a>
-
         <input type="submit" value="Save modules">
+        <a href="{% url 'module_create' course.id %}"><button type="button">Add</button></a>
     </form>
 </div>
 {% endblock %}

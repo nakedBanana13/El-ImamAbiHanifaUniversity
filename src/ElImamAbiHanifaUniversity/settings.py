@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'accounts.middleware.ApprovalMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'courses.middlewares.EnrollStudentMiddleware',
@@ -132,7 +133,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('GMAIL_EMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
@@ -148,3 +155,9 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+FILES_ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.docx', '.pptx', '.xls']
+IMAGES_ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png']
+
+LOGIN_URL = '/account/login/'
+LOGOUT_REDIRECT_URL = '/account/login/'

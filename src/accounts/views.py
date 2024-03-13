@@ -1,12 +1,11 @@
 import os
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, FormView, UpdateView, ListView, DetailView
+from django.views.generic import TemplateView, FormView
 from .models import CustomUser, Student, Document
 from .forms import StudentRegistrationForm
 
@@ -25,6 +24,12 @@ class StudentRegistrationView(FormView):
         email = form.cleaned_data['email']
         date_of_birth = form.cleaned_data['date_of_birth']
         photo = form.cleaned_data['photo']
+
+        allowed_domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'protonmail.com', 'mail.com', 'yandex.com']
+        domain = email.split('@')[-1]
+        if domain not in allowed_domains:
+            # Email domain is not allowed, raise validation error
+            raise ValidationError("Sorry, registration is only allowed with certain email providers.")
 
         # Save user instance
         user = CustomUser.objects.create_user(
@@ -58,6 +63,7 @@ class RegistrationDoneView(TemplateView):
 
 
 class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
     def get_success_url(self):
         # Call the parent class's get_success_url method to get the default URL
         success_url = super().get_success_url()
@@ -70,7 +76,6 @@ class CustomLoginView(LoginView):
             if user.is_student:
                 return '/student/dashboard/'  # Redirect to the student dashboard
             return '/course/mine/'  # Redirect to the instructor dashboard
-
         # If user type is not recognized, redirect to the default success URL
         return success_url
 
@@ -98,3 +103,8 @@ class ServePhotoView(View):
                     response = HttpResponse(f.read(), content_type='image/jpeg')
                     return response
         return HttpResponseNotFound("Photo not found")
+
+
+class UnderReviewView(TemplateView):
+    template_name = 'accounts/under_review.html'
+

@@ -1,17 +1,11 @@
-import logging
-import os
-
 from accounts.models import Instructor
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.apps import apps
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count
 from django.forms import modelform_factory
-from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.utils.text import slugify
 from django.views.generic import DetailView
 from django.views.generic.base import TemplateResponseMixin, View
 from django.views.generic.list import ListView
@@ -23,18 +17,18 @@ from .forms import ModuleFormSet
 class OwnerMixin(object):
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(owner=self.request.user.instructor)
+        return qs.filter(owner=self.request.user.instructor_profile)
 
 
 class OwnerEditMixin(object):
     def form_valid(self, form):
-        form.instance.owner = self.request.user.instructor
+        form.instance.owner = self.request.user.instructor_profile
         return super().form_valid(form)
 
 
 class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin, PermissionRequiredMixin):
     model = Course  # used for querySets(used by all views)
-    fields = ['faculty', 'subject', 'study_year', 'title', 'overview']  # The fields of the model to build the model form of the CreateView
+    fields = ['faculty', 'subject', 'study_year', 'title', 'overview', 'is_active']  # The fields of the model to build the model form of the CreateView
     # and UpdateView views
 
     success_url = reverse_lazy('manage_course_list')  # redirect the user after the form is successfully submitted
@@ -50,7 +44,7 @@ class ManageCourseListView(OwnerCourseMixin, ListView):
 
     def get_queryset(self):
         # Retrieve the instructor associated with the logged-in user
-        instructor = self.request.user.instructor
+        instructor = self.request.user.instructor_profile
 
         # Filter courses by the instructor
         queryset = Course.objects.filter(owner=instructor)
@@ -65,20 +59,16 @@ class CourseCreateView(OwnerCourseEditMixin, CreateView):
         # Assign the current user as the owner of the course
         if self.request.user.is_authenticated:
             user = self.request.user
-            print(f"User '{user.username}' is authenticated.")
 
             instructor = get_object_or_404(Instructor, user=user)
-            print(f"Retrieved Instructor instance for user '{user.username}'.")
 
             course = form.save(commit=False)
             course.owner = instructor
             course.save()
-            print(f"Course saved with owner '{instructor.user.username}'.")
 
             return redirect('manage_course_list')
         else:
             # Redirect the user to the login page if they're not authenticated
-            print("User is not authenticated. Redirecting to login page.")
             return redirect('login')
 
 
@@ -109,6 +99,27 @@ class CourseDetailView(DetailView):
     template_name = 'courses/course/detail.html'
 
 
+class ModuleCreateView(CreateView):
+    model = Module
+    fields = ['title', 'description']
+    template_name = 'courses/manage/module/module_create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['course_id'] = self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        form.instance.course = Course.objects.get(pk=self.kwargs['pk'])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # If 'action' is 'save_and_add_another', redirect to the module create view again
+        if self.request.POST.get('action') == 'save_and_add_another':
+            return reverse_lazy('module_create', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('course_module_update', kwargs={'pk': self.kwargs['pk']})
+
+
 class CourseModuleUpdateView(TemplateResponseMixin, View):
     """handles adding, updating, and  deleting modules for a specific course"""
     template_name = 'courses/manage/module/formset.html'
@@ -120,7 +131,7 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
     """attempts to delegate to a lowercase method  that matches the HTTP method used. A GET request is delegated to the 
        get() method and a POST request to post() """
     def dispatch(self, request, pk):
-        self.course = get_object_or_404(Course, id=pk, owner=request.user.instructor)
+        self.course = get_object_or_404(Course, id=pk, owner=request.user.instructor_profile)
         return super().dispatch(request, pk)
 
     def get(self, request, *args, **kwargs):
@@ -154,15 +165,15 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
         return Form(*args, **kwargs)
 
     def dispatch(self, request, module_id, model_name, id=None):
-        self.module = get_object_or_404(Module, id=module_id, course__owner=request.user.instructor)
+        self.module = get_object_or_404(Module, id=module_id, course__owner=request.user.instructor_profile)
         self.model = self.get_model(model_name)
         if id:
-            self.obj = get_object_or_404(self.model, id=id, owner=request.user.instructor)
+            self.obj = get_object_or_404(self.model, id=id, owner=request.user.instructor_profile)
         return super().dispatch(request, module_id, model_name, id)
 
     def get(self, request, module_id, model_name, id=None):
         form = self.get_form(self.model, instance=self.obj)
-        return self.render_to_response({'form': form, 'object': self.obj})
+        return self.render_to_response({'form': form, 'object': self.obj, 'module_id': module_id})
 
     def post(self, request, module_id, model_name, id=None):
         form = self.get_form(self.model, instance=self.obj, data=request.POST, files=request.FILES)
@@ -188,20 +199,20 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
             #    with open(file_path, 'wb+') as destination:
             #        for chunk in file_instance.file.chunks():
             #            destination.write(chunk)
-            obj.owner = request.user.instructor
+            obj.owner = request.user.instructor_profile
             obj.save()
 
             if not id:
                 Content.objects.create(module=self.module, item=obj)
             return redirect('module_content_list', self.module.id)
 
-        return self.render_to_response({'form': form, 'object': self.obj})
+        return self.render_to_response({'form': form, 'object': self.obj, 'module_id': module_id})
 
 
 class ContentDeleteView(View):
 
     def post(self, request, id):
-        content = get_object_or_404(Content, id=id, module__course__owner=request.user.instructor)
+        content = get_object_or_404(Content, id=id, module__course__owner=request.user.instructor_profile)
         module = content.module
         content.item.delete()
         content.delete()
@@ -212,19 +223,19 @@ class ModuleContentListView(TemplateResponseMixin, View):
     template_name = 'courses/manage/module/content_list.html'
 
     def get(self, request, module_id):
-        module = get_object_or_404(Module, id=module_id, course__owner=request.user.instructor)
+        module = get_object_or_404(Module, id=module_id, course__owner=request.user.instructor_profile)
         return self.render_to_response({'module': module})
 
 
 class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
-            Module.objects.filter(id=id, course__owner=request.user.instructor).update(order=order)
+            Module.objects.filter(id=id, course__owner=request.user.instructor_profile).update(order=order)
         return self.render_json_response({'saved': 'OK'})
 
 
 class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
-            Content.objects.filter(id=id, module__course__owner=request.user.instructor).update(order=order)
+            Content.objects.filter(id=id, module__course__owner=request.user.instructor_profile).update(order=order)
         return self.render_json_response({'saved': 'OK'})

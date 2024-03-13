@@ -21,6 +21,7 @@
       {{ form.as_p }}
       {% csrf_token %}
       <p><input type="submit" value="Save content"></p>
+      <a href="{% url 'module_content_list' module_id %}"><button type="button">Cancel</button></a>
     </form>
   </div>
 {% endblock %}

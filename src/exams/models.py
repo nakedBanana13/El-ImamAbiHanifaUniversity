@@ -63,7 +63,11 @@ class Exam(models.Model):
         verbose_name_plural = "Exams"
 
     def __str__(self):
-        return f"Exam - Scheduled at {self.scheduled_datetime}"
+        course = self.modules.first().course
+        faculty = course.faculty
+        subject = course.subject
+        study_year = course.study_year
+        return f"Exam - faculty of {faculty} subject {subject} {study_year}"
 
     def is_accessible(self):
         """

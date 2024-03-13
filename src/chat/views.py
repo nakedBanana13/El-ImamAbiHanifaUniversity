@@ -8,9 +8,9 @@ def course_chat_room(request, course_id):
     try:
         user = request.user
         if user.is_student:
-            course = request.user.student.courses_joined.get(id=course_id)
+            course = request.user.student_profile.courses_joined.get(id=course_id)
         else:
-            course = request.user.instructor.courses_created.get(id=course_id)
+            course = request.user.instructor_profile.courses_created.get(id=course_id)
     except Exception as e:
         return HttpResponseForbidden()
     return render(request, 'chat/room.html', {'course': course})

@@ -239,7 +239,7 @@ class ExamView(View):
                 choice_id = request.POST.get(f'question_{exam_question.id}', None)
                 if choice_id:
                     selected_choice = get_object_or_404(ExamChoice, id=choice_id)
-                    StudentAnswer.objects.create(student=request.user.student, exam_question=exam_question, exam=exam_token.exam,
+                    StudentAnswer.objects.create(student=request.user.student_profile, exam_question=exam_question, exam=exam_token.exam,
                                                  selected_choice=selected_choice, mark_obtained=exam_questions_mark if selected_choice.is_correct else 0)
 
         # Mark the token as used
@@ -252,7 +252,7 @@ class ExamView(View):
 class DisplayCorrectedAnswersView(View):
     def get(self, request, token):
         exam_token = get_object_or_404(ExamToken, token=token)
-        answered_questions = StudentAnswer.objects.filter(student=request.user.student,
+        answered_questions = StudentAnswer.objects.filter(student=request.user.student_profile,
                                                           exam=exam_token.exam)
 
         correct_answers = {}

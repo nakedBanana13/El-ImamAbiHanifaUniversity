@@ -1,5 +1,8 @@
 from os.path import basename
+
+from django.conf import settings
 from django.contrib import admin
+from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils.html import format_html
 from django.contrib.admin import ModelAdmin
@@ -58,10 +61,15 @@ class BaseUserAdminMixin():
 
 
 class UserActionMixin():
+    def send_approval_email(self, user_email, subject, message):
+        sender_email = settings.EMAIL_HOST_USER
+        send_mail(subject, message, sender_email, [user_email])
+
     def make_approved(self, request, queryset):
         for obj in queryset:
             obj.user.is_approved = True
             obj.user.save()
+            self.send_approval_email(obj.user.email, 'Your account has been approved', 'Your account has been approved. You can now login.')
 
     make_approved.short_description = "Mark selected as approved"
 
@@ -76,6 +84,8 @@ class UserActionMixin():
         for obj in queryset:
             obj.user.is_active = False
             obj.user.save()
+            self.send_approval_email(obj.user.email, 'Your account has been deactivated', 'Your account has been deactivated. You can no longer login.')
+
 
     make_inactive.short_description = "Mark selected as inactive"
 
@@ -83,6 +93,8 @@ class UserActionMixin():
         for obj in queryset:
             obj.user.is_active = True
             obj.user.save()
+            self.send_approval_email(obj.user.email, 'Your account has been activated', 'Your account has been deactivated. You can now login.')
+
 
     make_active.short_description = "Mark selected as active"
     actions = ['make_approved', 'make_not_approved', 'make_inactive', 'make_active']
@@ -93,6 +105,7 @@ class StudentAdmin(admin.ModelAdmin, BaseUserAdminMixin, UserActionMixin):
     list_display = BaseUserAdminMixin.list_display + ('faculty', 'study_year', 'view_documents')
     list_filter = ('faculty', 'study_year', 'user__is_active', 'user__is_approved')
     search_fields = ('user__first_name', 'user__last_name', 'user__email')
+    search_help_text = 'Search by first name, last name, email'
     actions = UserActionMixin.actions
 
     def view_documents(self, obj):
@@ -109,17 +122,20 @@ class StudentAdmin(admin.ModelAdmin, BaseUserAdminMixin, UserActionMixin):
     view_documents.short_description = "Documents"
 
 
-@admin.register(CustomUser)
-class CustomUserAdmin(ModelAdmin):
-    list_display = ('id', 'first_name', 'last_name', 'email', 'username', 'date_of_birth', 'is_active', 'is_approved', 'view_photo_link')
-
-    def view_photo_link(self, obj):
-        if obj.photo:
-            url = reverse('serve_photo', kwargs={'username': obj.username})
-            return format_html('<a href="{}">View Photo</a>', url)
-        return "No photo"
-
-    view_photo_link.short_description = "Photo Link"
+#@admin.register(CustomUser)
+#class CustomUserAdmin(ModelAdmin):
+#    list_display = ('id', 'first_name', 'last_name', 'email', 'username', 'date_of_birth', 'is_student', 'is_active', 'is_approved', 'view_photo_link')
+#    list_filter = ('is_active', 'is_approved', 'is_student')
+#    search_fields = ('first_name', 'last_name', 'email', 'username')
+#    search_help_text = 'Search by first name, last name, email, username'
+#
+#    def view_photo_link(self, obj):
+#        if obj.photo:
+#            url = reverse('serve_photo', kwargs={'username': obj.username})
+#            return format_html('<a href="{}">View Photo</a>', url)
+#        return "No photo"
+#
+#    view_photo_link.short_description = "Photo Link"
 
 
 @admin.register(Instructor)
@@ -149,8 +165,9 @@ class ExtensionListFilter(admin.SimpleListFilter):
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ('user', 'uploaded_at', 'view_document_link')
-    list_filter = (ExtensionListFilter,)
-    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email']
+    list_filter = (ExtensionListFilter, 'user')
+    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email', 'uploaded_at']
+    search_help_text = 'Search by first name, last name, email, username, uploaded date'
 
     def view_document_link(self, obj):
         if obj.document:

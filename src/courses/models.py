@@ -1,6 +1,8 @@
+from ElImamAbiHanifaUniversity.settings import FILES_ALLOWED_EXTENSIONS, IMAGES_ALLOWED_EXTENSIONS
 from accounts.models import Instructor
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.text import slugify
@@ -45,6 +47,7 @@ class Course(models.Model):
     overview = models.TextField()
     created = models.DateTimeField(
         auto_now_add=True)  # The date and time when the course was created (automatically set)
+    is_active = models.BooleanField(default=False)
     from accounts.models import Student
     students = models.ManyToManyField(Student, related_name='courses_joined', blank=True)
 
@@ -64,6 +67,7 @@ class Module(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     order = OrderField(blank=True, for_fields=['course'])
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.order}. {self.title}'
@@ -108,11 +112,11 @@ class Text(ItemBase):
 
 
 class File(ItemBase):
-    file = models.FileField(upload_to='files')
+    file = models.FileField(upload_to='files', validators=[FileExtensionValidator(allowed_extensions=FILES_ALLOWED_EXTENSIONS)])
 
 
 class Image(ItemBase):
-    file = models.FileField(upload_to='images')
+    file = models.FileField(upload_to='images', validators=[FileExtensionValidator(allowed_extensions=IMAGES_ALLOWED_EXTENSIONS)])
 
 
 class Video(ItemBase):

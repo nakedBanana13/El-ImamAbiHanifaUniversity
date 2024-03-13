@@ -7,7 +7,7 @@ class EnrollStudentMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.user.is_authenticated and hasattr(request.user, 'student'):
             try:
-                student = request.user.student
+                student = request.user.student_profile
                 faculty = student.faculty
                 study_year = student.study_year
                 matching_courses = Course.objects.filter(faculty=faculty, study_year=study_year)

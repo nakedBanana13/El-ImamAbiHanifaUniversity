@@ -21,7 +21,7 @@
         {{ form.as_p }}
         {% csrf_token %}
         <p><input type="submit" value="Save course"></p>
-        <button type="button" onclick="window.location.href = window.location.href;">Cancel</button>
+        <a href="{% url 'manage_course_list' %}"><button type="button">Cancel</button></a>
     </form>
 </div>
 {% endblock %}
