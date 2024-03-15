@@ -54,7 +54,7 @@ class ExamForm(forms.ModelForm):
 
     class Meta:
         model = Exam
-        fields = ['modules', 'number_of_questions', 'duration_hours', 'scheduled_datetime', 'total_marks']
+        fields = ['modules', 'number_of_questions', 'duration_minutes', 'scheduled_datetime', 'total_marks', 'lock_course_during_exam']
         widgets = {
             'modules': forms.CheckboxSelectMultiple(),
             'scheduled_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'})

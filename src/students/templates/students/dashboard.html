@@ -1,19 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}صفحة الطالب{% endblock %}
 
 {% block content %}
-   <h2>Dashboard</h2>
-   <p><a href="{% url 'student_edit' %}">Edit Your Details</a></p>
+   <p>
+    <a class="btn btn-primary" href="{% url 'student_edit' %}">
+        <i class="fas fa-edit"></i>تعديل بياناتك
+    </a>
+</p>
 
-   <h1>My courses</h1>
 
-     <div>
-       {% for course in object_list %}
-         <div>
-           <h3>{{ course.title }}</h3>
-           <p><a href="{% url 'student_course_details' course.id %}">Access contents</a></p>
-         </div>
-       {% endfor %}
-     </div>
-{% endblock %}
+   <h1 class="text-center">موادي</h1>
+<section class="section">
+      <div class="container">
+<div class="col-12 mb-5">
+    {% for course in object_list %}
+    <div class="list-group list-group-horizontal text-center">
+        <a href="{% url 'student_course_details' course.id %}" class="list-group-item list-group-item-action">{{ course.title }}</a>
+    </div>
+    {% endfor %}
+</div>
+      </div>
+    </section>
+ {% endblock %}

@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{% if form.instance.pk %}Update Question{% else %}Create Question{% endif %}{% endblock %}
+{% block title %}{% if form.instance.pk %}تحديث السؤال{% else %}إنشاء سؤال{% endif %}{% endblock %}
 
 {% block content %}
-    <h1>{% if form.instance.pk %}Update Question{% else %}Create Question{% endif %}</h1>
-    <form method="post">
+<div class="container">
+    <h1 class="text-center">{% if form.instance.pk %}تحديث السؤال{% else %}إنشاء سؤال{% endif %}</h1>
+    <form method="post" class="mt-4">
         {% csrf_token %}
         {{ form.as_p }}
         <fieldset>
-            <legend>Choices</legend>
+            <legend>الخيارات</legend>
             {{ choice_formset.management_form }}
             {% for choice_form in choice_formset %}
                 <div>
@@ -25,10 +26,12 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <button type="submit">Save</button>
+        <br>
+        <button type="submit" class="btn btn-success me-2">حفظ <i class="fa-regular fa-floppy-disk"></i></button>
         {% if not form.instance.pk %}
-            <button type="submit" name="save_and_add_another" value="true">Save and Add Another</button>
+            <button type="submit" name="save_and_add_another" value="true" class="btn btn-success me-2">حفظ و إضافة آخر <i class="fa-regular fa-floppy-disk"></i></button>
         {% endif %}
-        <a href="{% url 'question_list' course_id  %}">Cancel</a>
+        <a href="{% url 'question_list' course_id  %}" class="btn btn-secondary">إلغاء</a>
     </form>
+</div>
 {% endblock %}

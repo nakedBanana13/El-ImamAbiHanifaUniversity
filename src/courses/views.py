@@ -3,7 +3,7 @@ from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count
-from django.forms import modelform_factory
+from django.forms import modelform_factory, model_to_dict
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
@@ -75,6 +75,16 @@ class CourseCreateView(OwnerCourseEditMixin, CreateView):
 class CourseUpdateView(OwnerCourseEditMixin, UpdateView):
     permission_required = 'courses.change_course'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        # Get the current instance of the course
+        course_instance = self.get_object()
+        # Convert the faculty instance to a dictionary
+        faculty_dict = model_to_dict(course_instance.faculty)
+        # Set the initial value for the faculty field
+        initial['faculty'] = faculty_dict['id']
+        return initial
+
 
 class CourseDeleteView(OwnerCourseMixin, DeleteView):
     template_name = 'courses/manage/course/delete.html'
@@ -101,7 +111,7 @@ class CourseDetailView(DetailView):
 
 class ModuleCreateView(CreateView):
     model = Module
-    fields = ['title', 'description']
+    fields = ['title', 'description', 'is_active']
     template_name = 'courses/manage/module/module_create.html'
 
     def get_context_data(self, **kwargs):

@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import date
 
 from django import forms
+
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.forms.widgets import ClearableFileInput
 from .models import Instructor, CustomUser
 from courses.models import Faculty, StudyYear
@@ -60,13 +62,21 @@ class StudentRegistrationForm(forms.ModelForm):
         date_of_birth = self.cleaned_data.get('date_of_birth')
         if date_of_birth:
             # Calculate age based on date of birth
-            today = datetime.date.today()
+            today = date.today()  # Explicitly reference the date class
             age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
             # Check if age is reasonable
             if age < 10 or age > 100:
                 raise forms.ValidationError("Please enter a valid date of birth.")
         return date_of_birth
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        domain = email.split('@')[-1]
+        allowed_domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'protonmail.com',
+                           'mail.com', 'yandex.com']
+        if domain not in allowed_domains:
+            raise ValidationError("Sorry, registration is only allowed with certain email providers.")
+        return email
 
 
 class InstructorAdminForm(forms.ModelForm):

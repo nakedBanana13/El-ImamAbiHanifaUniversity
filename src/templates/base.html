@@ -1,35 +1,160 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html dir="rtl" lang="ar">
 <head>
-    <meta charset="utf-8"/>
-    <title>{% block title %}Abi Hanifah University{% endblock %}</title>
-    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&family=Inter:wght@100..900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Tajawal:wght@200;300;400;500;700;800;900&family=Work+Sans:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.6/examples/carousel/">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/favicon/site.webmanifest' %}">
+
+    <title>{% block title %}جامعة الإمام الأعظم أبي حنيفة النعمان{% endblock %}</title>
+
 </head>
 <body>
 <div id="header">
-    <a href="/" class="logo">Abi Hanifah University LOGO</a>
-    <ul class="menu">
-      {% if request.user.is_authenticated %}
-        <li><a href="{% url 'logout' %}">Sign out</a></li>
-      {% else %}
-        <a href="{% url 'register' %}">Sign up</a>
-        <li><a href="{% url 'login' %}">Sign in</a></li>
-      {% endif %}
-    </ul>
+    <!-- Start header navbar -->
+      <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom">
+        <div class="container">
+          <a class="navbar-brand" href="/"><img src="{% static 'images/logo.png' %}" class= "img-logo-nav" alt="logo"></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'university_management' %}">إدارة الجامعة</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
+                  البكالوريوس
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item text-right border-bottom" href="{% url 'manahej' %}">العلوم الشرعية</a>
+                  <a class="dropdown-item text-right" href="{% url 'manahej' %}">اللغة العربية</a>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="under constract.html" role="button" data-toggle="dropdown" aria-expanded="false">
+                  الدراسات العليا
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item text-right border-bottom" href="under constract.html">الدبلوم العالي</a>
+                  <a class="dropdown-item text-right border-bottom" href="under constract.html">الماجستير</a>
+                  <a class="dropdown-item text-right" href="under constract.html">الدكتوراة</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="under constract.html" role="button" data-toggle="dropdown" aria-expanded="false">
+                  أقسام المجمع
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item text-right border-bottom" href="under constract.html">جامعة الإمام الأعظم أبي حنيفة</a>
+                  <a class="dropdown-item text-right border-bottom" href="under constract.html">أكاديمية الإمام الأعظم أبي حنيفة</a>
+                  <a class="dropdown-item text-right border-bottom" href="under constract.html">منصة الإمام الأعظم أبي حنيفة</a>
+                  <a class="dropdown-item text-right border-bottom" href="https://www.facebook.com/profile.php?id=100083331222705&mibextid=ZbWKwL">مجلة أمةً وسطاً</a>
+                  <a class="dropdown-item text-right" href="under constract.html">الدبلومات</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link ml-3" href="#">تواصل معنا</a>
+              </li>
+              {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                  <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="nav-link regist btn btn-warning" type="submit">تسجيل الخروج <i class="fa fa-sign-out" aria-hidden="true"></i></button>
+                  </form>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link regist btn btn-warning" href="{% url 'login' %}">&nbsp;تسجيل الدخول&nbsp; <i class="fa-solid fa-right-to-bracket"></i></a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+    <!-- End header navbar -->
 </div>
+
+<a id="go_up_button"></a>
 
 <div id="content">
     {% block content %}
     {% endblock %}
 </div>
 
+<!-- start Footer -->
+
+    <footer class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5 col-12 middle-foot">
+        <h2 class="text-warning mt-2">تواصل معنا</h2> <br>
+        <form class="contact-us-form">
+
+          <div class="form-group">
+            <p class="text-white">أرسل لنا رسالة:</p>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="محتوى الرسالة"></textarea>
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-control" placeholder="أدخل الإيميل">
+          </div>
+          <button type="submit" class="btn btn-warning mb-4 button-send">إرسال </button>
+        </form>
+      </div>
+
+      <div class="col-md-1 col-12 middle-foot">
+        <!-- Empty column for spacing -->
+      </div>
+
+      <div class="col-md-5 col-12 middle-foot">
+        <h2 class="text-warning mt-2">روابط هامة</h2> <br>
+        <a href="#" class="important-a"><p>أكاديمية الإمام الأعظم أبي حنيفة النعمان</p></a>
+        <a href="#" class="important-a"><p>منصـة الإمام الأعظم أبي حنيفة النعمان</p></a>
+        <a href="#" class="important-a"><p>مجلة أمةً وسطاً</p></a>
+        <a href="#" class="important-a"><p>الدبلومات</p></a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="social-icons mb-2">
+          <p class="text-white">تابعونا على مواقع التواصل الاجتماعي </p>
+          <p class="text-white">تابعونا على مواقع التواصل الاجتماعي </p>
+          <a href="https://web.facebook.com/people/%D8%AC%D8%A7%D9%85%D8%B9%D8%A9-%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D9%85-%D8%A7%D9%84%D8%A3%D8%B9%D8%B8%D9%85-%D8%A3%D8%A8%D9%8A-%D8%AD%D9%86%D9%8A%D9%81%D8%A9-%D8%A7%D9%84%D9%86%D8%B9%D9%85%D8%A7%D9%86-%D8%B1%D8%B6%D9%8A-%D8%A7%D9%84%D9%84%D9%87-%D8%AA%D8%B9%D8%A7%D9%84%D9%89-%D8%B9%D9%86%D9%87/100075990244751/"> <i class="fab fa-facebook"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://www.youtube.com/@imamabuhanifaal-numanacademy"> <i class="fab fa-youtube"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="https://wa.me/00249968605830"> <i class="fab fa-whatsapp"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="under constract.html"> <i class="fab fa-telegram"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="under constract.html"> <i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <!-- end Footer -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+<script src="{% static 'js/script.js' %}"></script>
 <script>
     $(document).ready(function () {
+
         {% block domready %}
 
         {% endblock %}

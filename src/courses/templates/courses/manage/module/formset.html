@@ -1,19 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %} Edit "{{ course.title }}" {% endblock %}
+{% block title %} تعديل "{{ course.title }}" {% endblock %}
 
 {% block content %}
-<h1>Edit "{{ course.title }}"</h1>
+<div class="container">
+<h1 class="mt-5">تعديل "{{ course.title }}"</h1>
 <div>
-    <h2>Course modules</h2>
-    <form method="post">
-        {{ formset }}
+    <h2>وحدات الدورة</h2>
+    <form method="post" class="mt-4">
+
         {{ formset.management_form }}
         {% csrf_token %}
-
-        <a href="{% url 'manage_course_list' %}"><button type="button">Cancel</button></a>
-        <input type="submit" value="Save modules">
-        <a href="{% url 'module_create' course.id %}"><button type="button">Add</button></a>
+        {% for form in formset %}
+        {{ form.as_p}}
+        <hr>
+        {% endfor %}
+        <div class="mb-3">
+        <a href="{% url 'manage_course_list' %}"><button type="button" class="btn btn-secondary">إلغاء</button></a>
+        <button type="submit" class="btn btn-success me-2" name="action" value="save">حفظ التغييرات <i class="fa-regular fa-floppy-disk"></i></button>
+        <a href="{% url 'module_create' course.id %}"><button type="button" class="btn btn-primary me-2">إضافة وحدة جديدة<i class="fa-solid fa-plus"></i></button></a>
+        </div>
     </form>
+</div>
 </div>
 {% endblock %}

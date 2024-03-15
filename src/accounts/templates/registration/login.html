@@ -1,26 +1,30 @@
 {% extends "base.html" %}
-
-{% block title %}Log-in{% endblock %}
+{% load static %}
+{% block title %}تسجيل الدخول{% endblock %}
 
 {% block content %}
-  <h1>Log-in</h1>
-  {% if form.errors %}
-    <p>
-      Your username and password didn't match.
-      Please try again.
-    </p>
-  {% else %}
-    <p>Log-in:</p>
-  {% endif %}
-  <div>
-    <form action="{% url 'login' %}" method="post">
-      {{ form.as_p }}
-      {% csrf_token %}
-      <input type="hidden" name="next" value="{{ next }}" />
-      <p><input type="submit" value="Log-in"></p>
+<div class="body-form bg-white mt-5">
+    <form class="form-signin text-center" action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <img class="mb-4" src="{% static 'images/logo.png' %}" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">تسجيل الدخول</h1>
+        {% if form.errors %}
+            <p class="text-danger">
+                اسم المستخدم أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.
+            </p>
+        {% endif %}
+        <label for="inputUsername" class="sr-only">اسم المستخدم</label>
+        <input id="inputUsername" name="username" class="form-control mb-3" placeholder="اسم المستخدم" required autofocus>
+        <label for="inputPassword" class="sr-only">كلمة المرور</label>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="كلمة المرور" required>
+        <button class="btn btn-lg btn-warning btn-block" type="submit">تسجيل الدخول</button>
+        <br>
+        <p>
+            <a href="{% url 'password_reset' %}">هل نسيت كلمة المرور؟</a>
+        </p>
+
+        <P class="mt-4">إذا كنت غير مسجلاً يمكنك التسجيل <a href="{% url 'register' %}" class="text-primary">من هنــا</a> </P>
+        <p class="mt-5 mb-3 text-muted">&copy; جامعة الإمام الأعظم أبي حنيفة النعمان. </p>
     </form>
-    <p>
-      <a href="{% url 'password_reset' %}">Forgotten your password?</a>
-    </p>
-  </div>
+</div>
 {% endblock %}

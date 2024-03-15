@@ -29,6 +29,7 @@ class QuestionListView(ListView):
         course = get_object_or_404(Course, pk=course_id)
         question_bank_id = course.question_bank.id
         context['question_bank_id'] = question_bank_id
+        context['course'] = course
         return context
 
 
@@ -190,6 +191,7 @@ class CreateExamFromQuestionBankView(CreateView):
             if form.is_valid():
                 exam = form.save(commit=False)
                 exam.save()
+                exam.lock_course_during_exam = form.cleaned_data.get('lock_content_during_exam', False)
                 selected_modules = form.cleaned_data['modules']
                 exam.modules.set(selected_modules)
 
@@ -204,7 +206,7 @@ class CreateExamFromQuestionBankView(CreateView):
                         ExamChoice.objects.create(exam_question=exam_question,
                                                   choice_text=choice.choice_text,
                                                   is_correct=choice.is_correct)
-                schedule_exam_task.apply_async(args=[exam.id], eta=exam.scheduled_datetime)
+                #schedule_exam_task.apply_async(args=[exam.id], eta=exam.scheduled_datetime)
                 self.request.session.flush()
                 return HttpResponseRedirect(self.get_success_url())
 
@@ -222,7 +224,13 @@ class ExamView(View):
 
         exam_questions = ExamQuestion.objects.filter(exam=exam_token.exam)
         form = ExamSubmissionForm(exam_questions=exam_questions)
-        return render(request, 'exams/exam.html', {'exam_token': exam_token, 'form': form})
+        exam = exam_token.exam
+        first_module = exam.modules.first()
+        course = first_module.course
+        faculty = course.faculty
+        study_year = course.study_year
+        subject = course.subject
+        return render(request, 'exams/exam.html', {'exam_token': exam_token, 'form': form, 'faculty': faculty, 'study_year': study_year, 'subject': subject})
 
     def post(self, request, token):
         exam_token = get_object_or_404(ExamToken, token=token, used=False)

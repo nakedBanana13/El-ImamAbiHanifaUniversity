@@ -1,5 +1,4 @@
 from os.path import basename
-
 from django.conf import settings
 from django.contrib import admin
 from django.core.mail import send_mail
@@ -7,7 +6,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.contrib.admin import ModelAdmin
 from django.utils.safestring import mark_safe
-from .models import CustomUser, Student, Instructor, Document
+from .models import Student, Instructor, Document
 from .forms import InstructorAdminForm
 
 
@@ -17,30 +16,30 @@ class BaseUserAdminMixin():
     def get_username(self, obj):
         return obj.user.username
 
-    get_username.short_description = 'Username'
+    get_username.short_description = 'اسم المستخدم'
 
     def get_first_name(self, obj):
         return obj.user.first_name
 
-    get_first_name.short_description = 'First Name'
+    get_first_name.short_description = 'الاسم الأول'
 
     def get_last_name(self, obj):
         return obj.user.last_name
 
-    get_last_name.short_description = 'Last Name'
+    get_last_name.short_description = 'الاسم الأخير'
 
     def get_email(self, obj):
         return obj.user.email
 
-    get_email.short_description = 'Email'
+    get_email.short_description = 'البريد الإلكتروني'
 
     def view_photo_link(self, obj):
         if obj.user.photo:
-            url = reverse('serve_photo', kwargs={'username': obj.user.username})
-            return format_html('<a href="{}">View Photo</a>', url)
-        return "No photo"
+            photo_url = obj.user.photo.url
+            return format_html('<a href="{}">عرض الصورة</a>', photo_url)
+        return "لا توجد صورة"
 
-    view_photo_link.short_description = "Photo Link"
+    view_photo_link.short_description = "رابط الصورة"
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
@@ -48,16 +47,16 @@ class BaseUserAdminMixin():
     def get_is_active(self, obj):
         return obj.user.is_active if obj.user else False
 
-    get_is_active.short_description = 'Is Active ?'
+    get_is_active.short_description = 'نشط '
     get_is_active.boolean = True
 
     def get_is_approved(self, obj):
         return obj.user.is_approved if obj.user else False
 
-    get_is_approved.short_description = 'Is Approved ?'
+    get_is_approved.short_description = 'مُوافق عليه'
     get_is_approved.boolean = True
 
-    get_date_of_birth.short_description = 'Date of Birth'
+    get_date_of_birth.short_description = 'تاريخ الميلاد'
 
 
 class UserActionMixin():
@@ -69,34 +68,32 @@ class UserActionMixin():
         for obj in queryset:
             obj.user.is_approved = True
             obj.user.save()
-            self.send_approval_email(obj.user.email, 'Your account has been approved', 'Your account has been approved. You can now login.')
+            self.send_approval_email(obj.user.email, 'تمت الموافقة على حسابك', 'تمت الموافقة على حسابك. يمكنك الآن تسجيل الدخول.')
 
-    make_approved.short_description = "Mark selected as approved"
+    make_approved.short_description = "تحديد كموافق عليه"
 
     def make_not_approved(self, request, queryset):
         for obj in queryset:
             obj.user.is_approved = False
             obj.user.save()
 
-    make_not_approved.short_description = "Mark selected as not approved"
+    make_not_approved.short_description = "تحديد كغير موافق عليه"
 
     def make_inactive(self, request, queryset):
         for obj in queryset:
             obj.user.is_active = False
             obj.user.save()
-            self.send_approval_email(obj.user.email, 'Your account has been deactivated', 'Your account has been deactivated. You can no longer login.')
+            self.send_approval_email(obj.user.email, 'تم إلغاء تنشيط حسابك', 'تم إلغاء تنشيط حسابك. لم يعد بإمكانك تسجيل الدخول.')
 
-
-    make_inactive.short_description = "Mark selected as inactive"
+    make_inactive.short_description = "تحديد كغير نشط"
 
     def make_active(self, request, queryset):
         for obj in queryset:
             obj.user.is_active = True
             obj.user.save()
-            self.send_approval_email(obj.user.email, 'Your account has been activated', 'Your account has been deactivated. You can now login.')
+            self.send_approval_email(obj.user.email, 'تم تنشيط حسابك', 'تم تنشيط حسابك. يمكنك الآن تسجيل الدخول.')
 
-
-    make_active.short_description = "Mark selected as active"
+    make_active.short_description = "تحديد كنشط"
     actions = ['make_approved', 'make_not_approved', 'make_inactive', 'make_active']
 
 
@@ -172,7 +169,8 @@ class DocumentAdmin(admin.ModelAdmin):
     def view_document_link(self, obj):
         if obj.document:
             url = reverse('serve_document', kwargs={'username': obj.user.username, 'document_id': obj.id})
-            return format_html('<a href="{}">View Document</a>', url)
-        return "No document"
+            return format_html('<a href="{}">عرض المستند</a>', url)
+        return "لا يوجد مستند"
 
-    view_document_link.short_description = "Document Link"
+    view_document_link.short_description = "رابط المستند"
+

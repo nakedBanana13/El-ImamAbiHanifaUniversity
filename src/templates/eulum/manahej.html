@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}المناهج وأقسام جامعة الإمام الأعظم أبي حنيفة النعمان{% endblock %}
+{% block content %}
+
+    <section class="section">
+      <div class="">
+        <img src="{% static 'images/management/banner.png' %}" class="w-100" alt="">
+      </div>
+    </section>
+
+
+    <!-- start main -->
+
+    <!-- 1. start  -->
+    <section class="section">
+
+      <div class="container mb-5">
+        <div class="row">
+
+          <div class="col-lg-6 col-12">
+            <div class="project__item">
+              <h2 class="golden-after mb-4">المناهج وطريقة التدريس</h2>
+              <p class="p-whoweare">بسم الله الرحمن الرحيم، الحمد لله رب العالمين وأفضل الصلاة وأتم التسليم على سيدنا محمد حبيب رب العالمين
+                <br>
+                أما بعد:
+                <br>
+                نحن في جامعة الإمام الأعظم أبي حنيفة النعمان للتعليم عن بعد نقوم بتدريس العلوم من أمهات الكتب والمتون المعتمَدة عند أهل العلم والمعرفة، عبر أساتذة مختصين ومؤهلين وعند قبول الطالب في الجامعة في القسم المحدد تظهر له له المحاضرات والاختبارات بحسب قسمه.
+              </div>
+          </div>
+
+          <div class="col-lg-6 col-12">
+            <div>
+              <img class="w-100 border img-radius" src="{% static 'images/manhaj.jpg' %}">
+            </div>
+          </div>  
+
+          <div class="col-12 mt-4">
+            <div class="project__item">
+              <p class="p-whoweare"> 
+                يقوم أعضاء الجامعة من الإداريين والأساتذة بإدارة الجامعة والتدريس وإصدار الشهادات عبر موقع الجامعة. 
+                <br>
+                كل طالب خريج من جامعة الإمام الأعظم أبي حنيفة النعمان يحصل على شهادة موثقة من جامعة شمس القلوب، والتوثيقات تكون متاحة على الشهادة الأصلية وهي كالتالي:
+                <br>
+                توثيق وختم كاتب عدل الولاية ووزارة الخارجية الأمريكية أو الابوستيل
+                <span class="text-danger">وليست وزارة التعليم.</span>
+                <br>
+                والجامعة غير مسؤولة عن التوثيق في بلد الطالب لأنه لكل بلد قوانينه الخاصة في توثيق الشهادات.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="project__item">
+              <p class="p-whoweare"> 
+                الأقسام والتخصصات في الجامعة هي كالتالي:
+              </p>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <h3 class="mb-2">كلية الشريعة الإسلامية:</h3>
+            <p class="lead p-staff">
+              <a href="{% url 'quran' %}" class="text-dark">قسم القرآن الكريم وعلومه.</a><br>
+              <a href="{% url 'qera2at' %}" class="text-dark">قسم القراءات.</a><br>
+              <a href="{% url '7adeeth' %}" class="text-dark">قسم الحديث النبوي الشريف وعلومه.</a><br>
+              <a href="{% url '3akaed' %}" class="text-dark">قسم العقيدة الإسلامية ومقارنة الأديان.</a><br>
+              <a href="{% url 'fekh_&_osoul' %}" class="text-dark">قسم الفقه وأصوله.</a><br>
+              <a href="{% url 'fekh_mok' %}" class="text-dark">قسم الفقه المقارن.</a><br>
+              <a href="{% url 'seera' %}" class="text-dark">قسم السيرة النبوية الشريفة.</a><br>
+              <a href="{% url '8ada2' %}" class="text-dark">قسم القضاء والإفتاء.</a><br>
+              <a href="{% url 'derasat' %}" class="text-dark">قسم الدراسات الإسلامية.</a><br>
+              <a href="{% url 'da3wa' %}" class="text-dark">قسم الدعوة والدعاة.</a><br>
+            </p>
+          </div>
+          <div class="col-12 col-md-6">
+            <h3 class="mb-2">كلية اللغة العربية:</h3>
+            <p class="lead p-staff">
+              <a href="{% url 'na7o' %}" class="text-dark">قسم النحو والصرف.</a><br>
+              <a href="{% url 'balagha' %}" class="text-dark">قسم البلاغة والأدب.</a><br>
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+{% endblock %}

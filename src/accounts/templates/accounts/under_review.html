@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Under review</title>
-</head>
-<body>
- <h1>your application is under review, we'll send an email telling you whether you're approved or not</h1>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}قيد المراجعة{% endblock %}
+
+{% block content %}
+  <div class="jumbotron blue-jumbotron">
+        <div class="container">
+            <h1>تم تقديم طلبك ويتم حاليًا مراجعته</h1>
+            <p>سنرسل لك بريدًا إلكترونيًا لإعلامك ما إذا تمت الموافقة على طلبك أو لا</p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Create Module{% endblock %}
+{% block title %}إنشاء وحدة دراسية{% endblock %}
 
 {% block content %}
-  <h1>Create Module</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="action" value="save">Save</button>
-    <button type="submit" name="action" value="save_and_add_another">Save and Add Another</button>
-    <a href="{% url 'course_module_update' course_id %}"><button type="button">Cancel</button></a>
-  </form>
+<div class="container">
+    <h1 class="mt-5">إنشاء وحدة دراسية</h1>
+    <form method="post" class="mt-4">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary me-2" name="action" value="save">حفظ <i class="fa-regular fa-floppy-disk"></i></button>
+            <button type="submit" class="btn btn-primary me-2" name="action" value="save_and_add_another">حفظ وإضافة أخرى</button>
+            <a href="{% url 'course_module_update' course_id %}" class="btn btn-secondary">إلغاء</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

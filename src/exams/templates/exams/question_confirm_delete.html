@@ -1,13 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}My courses{% endblock %}
+{% block title %} تأكيد حذف سؤال {% endblock %}
 
 {% block content %}
-<h1>Confirm Delete</h1>
-    <p>Are you sure you want to delete the question "{{ object }}"?</p>
+<div class="container">
+<h1>تأكيد الحذف</h1>
+<div class="alert alert-danger">
+    <p>هل أنت متأكد أنك تريد حذف السؤال "{{ object }}"؟</p>
+</div>
     <form method="post">
         {% csrf_token %}
-        <input type="submit" value="Confirm">
-        <a href="{% url 'question_list' course_id %}">Cancel</a>
+        <input type="submit" value="تأكيد" class="btn btn-danger">
+        <a href="{% url 'question_list' course_id %}" class="btn btn-secondary">إلغاء</a>
     </form>
+</div>
 {% endblock %}

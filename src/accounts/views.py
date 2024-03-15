@@ -1,9 +1,8 @@
 import os
 from django.contrib.auth.views import LoginView
-from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView, FormView
 from .models import CustomUser, Student, Document
@@ -13,7 +12,6 @@ from .forms import StudentRegistrationForm
 class StudentRegistrationView(FormView):
     template_name = 'accounts/register.html'
     form_class = StudentRegistrationForm
-    success_url = reverse_lazy('registration_done')
 
     def form_valid(self, form):
         # Extract user information including the birth_date
@@ -25,12 +23,6 @@ class StudentRegistrationView(FormView):
         date_of_birth = form.cleaned_data['date_of_birth']
         photo = form.cleaned_data['photo']
 
-        allowed_domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'protonmail.com', 'mail.com', 'yandex.com']
-        domain = email.split('@')[-1]
-        if domain not in allowed_domains:
-            # Email domain is not allowed, raise validation error
-            raise ValidationError("Sorry, registration is only allowed with certain email providers.")
-
         # Save user instance
         user = CustomUser.objects.create_user(
             username=username,
@@ -41,6 +33,8 @@ class StudentRegistrationView(FormView):
             date_of_birth=date_of_birth,
             photo=photo
         )
+
+        success_url = reverse('registration_done') + f'?user_id={user.id}'
 
         # Extract faculty and study_year from the form
         faculty = form.cleaned_data['faculty']
@@ -55,15 +49,24 @@ class StudentRegistrationView(FormView):
             for doc in documents:
                 Document.objects.create(user=user, document=doc)
 
-        return HttpResponseRedirect(self.get_success_url())
+        return HttpResponseRedirect(success_url)
 
 
 class RegistrationDoneView(TemplateView):
     template_name = 'accounts/registration_done.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Retrieve the user object passed in the URL query parameter
+        user_id = self.request.GET.get('user_id')
+        user = CustomUser.objects.get(id=user_id)
+        context['user'] = user
+        return context
+
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
+
     def get_success_url(self):
         # Call the parent class's get_success_url method to get the default URL
         success_url = super().get_success_url()
@@ -107,4 +110,3 @@ class ServePhotoView(View):
 
 class UnderReviewView(TemplateView):
     template_name = 'accounts/under_review.html'
-

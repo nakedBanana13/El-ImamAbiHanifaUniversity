@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}إدارة الجامعة{% endblock %}
+
+{% block content %}
+<section class="section" style="margin-top: -2rem;">
+      <div class="">
+        <img src="{% static 'images/management/banner.png' %}" class="w-100" alt="">
+      </div>
+    </section>
+
+<section class="section" style="margin-top: 2rem;">
+
+      <div class="container mb-5">
+        <div class="row">
+
+          <div class="col-md-6 col-12">
+            <div class="project__item">
+              <h2 class="golden-after mb-4">إدارة الجامعة</h2>
+              <p class="p-whoweare">بسم الله الرحمن الرحيم، الحمد لله رب العالمين وأفضل الصلاة وأتم التسليم على سيدنا محمد حبيب رب العالمين
+                <br>
+                أما بعد:
+                <br>
+                تتم إدارة الجامعة عبر كادر من الأساتذة الفضلاء أصحاب العلم والاختصاص.
+                <br>
+                يقوم أعضاء الجامعة من الإداريين والأساتذة بإدارة الجامعة والتدريس وإصدار الشهادات عبر موقع الجامعة.
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div>
+              <img class="w-100 border img-radius" src="{% static 'images/management/hall.jpg' %}">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h3 class="mb-4 mt-4">الكادر الإداري</h3>
+            <p class="lead p-staff">
+              <a href="{% url 'dr_osama_abrash' %}" class="text-dark">فضيلة الشيخ الطبيب: أسامة محمد سميح الأبرش (رئيس الجامعة) </a><br>
+              <a href="{% url 'dr_daher_alhamood' %}" class="text-dark">فضيلة الشيخ الدكتور : ضاهر الحمود ( المدير الإداري ونائب رئيس الجامعة ) </a><br>
+              <a href="{% url 'dr_ammar_bazerbashi' %}" class="text-dark">فضيلة الشيخ : عمار بازر باشي ( عميد كلية الشريعة والدراسات الإسلامية ورئيس قسم القرآن الكريم وعلومه  ) </a><br>
+              <a  class="text-dark">فضيلة الشيخ  : غياث قزموز (رئيس قسم الدعوة الإسلامية والدعاة ) </a><br>
+              <a href="{% url 'dr_ammar_bazerbashi' %}" class="text-dark">فضيلة الشيخ المقرئ : عمار بازر باشي ( رئيس قسم القراءات ) </a><br>
+              <a href="{% url 'dr_mouaffak_almohemeed' %}" class="text-dark">فضيلة الشيخ الدكتور:  موفق المحيميد (  رئيس قسم السيرة النبوية الشريفة ) </a><br>
+              <a  class="text-dark">فضيلة الشيخ الدكتور : غنى احمد  عيواظة( رئيس قسم الفقه والفقه المقارن ) </a><br>
+              <a  class="text-dark">فضيلة  الشيخ :   محيي الدّين عبدالرّزاق صدّيق مزّاويّة ( رئيس قسم العقيدة الإسلامية ومقارنة الأديان ) </a><br>
+              <a  class="text-dark">فضيلة الشيخ الدكتور : حسين عبد الرحمن سليمان  ( رئيس قسم الفقه وأصوله ) </a><br>
+              <a href="{% url 'dr_mouaffak_almohemeed' %}" class="text-dark">فضيلة الشيخ الدكتور:  موفق المحيميد ( رئيس قسم الحديث النبوي الشريف وعلومه ) </a><br>
+              <a  class="text-dark">فضيلة  الشيخ :   محيي الدّين عبدالرّزاق صدّيق مزّاويّة ( رئيس قسم القضاء والإفتاء ) </a><br>
+              <a  class="text-dark">فضيلة  الدكتورة: غنى احمد  عيواظة  ( عميد كلية اللغة العربية ورئيس قسم البلاغة والأدب ) </a><br>
+              <a href="{% url 'dr_shafeek_aldeen_alsalah' %}"  class="text-dark">فضيلة الشيخ : شفيق الدين الصالح ( رئيس قسم النحو والصرف )   </a><br>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+{% endblock %}

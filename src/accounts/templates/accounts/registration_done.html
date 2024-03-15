@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome{% endblock %}
+{% block title %}تم التسجيل بنجاح{% endblock %}
 
 {% block content %}
-  <h1>Welcome {{ new_user.first_name }}!</h1>
-  <p>Your account has been successfully created.</p>
+  <div class="jumbotron green-jumbotron">
+        <div class="container">
+            <h1>مرحباً {{ user.first_name }} {{ user.last_name }}!</h1>
+            <p>تم إنشاء حسابك بنجاح! سيتم مراجعة طلبك من قبل الإدارة و إعلامك بالنتيجة في أقرب وقت</p>
+        </div>
+    </div>
 {% endblock %}

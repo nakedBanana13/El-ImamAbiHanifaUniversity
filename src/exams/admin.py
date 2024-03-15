@@ -26,8 +26,8 @@ class QuestionAdmin(admin.ModelAdmin):
 
 @admin.register(Exam)
 class ExamAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_modules', 'number_of_questions', 'total_marks', 'duration_hours', 'scheduled_datetime', 'emails_sent', 'created')
-    list_filter = ('modules', 'number_of_questions', 'duration_hours', 'scheduled_datetime', 'created')
+    list_display = ('id', 'get_modules', 'number_of_questions', 'total_marks', 'duration_minutes', 'scheduled_datetime', 'emails_sent', 'lock_course_during_exam', 'created')
+    list_filter = ('modules', 'number_of_questions', 'scheduled_datetime', 'created', 'lock_course_during_exam')
     search_fields = ('modules__title',)
     search_help_text = 'Search by module\'s title'
 

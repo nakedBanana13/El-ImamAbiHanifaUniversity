@@ -1,25 +1,24 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Exam</title>
-</head>
-<body>
-    <h1>Create Exam</h1>
-    <form method="post">
+{% extends "base.html" %}
+
+{% block title %}إنشاء امتحان{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">إنشاء امتحان</h1>
+    <form method="post" class="mt-4">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" name="generate" value="generate">Generate Questions</button>
-        <button type="submit" name="confirm" value="confirm">Create Exam</button>
+        <button type="submit" class="btn btn-primary me-2" name="generate" value="generate">إنشاء أسئلة <i class="fas fa-file-alt"></i></button>
+        <button type="submit" class="btn btn-success me-2" name="confirm" value="confirm" {% if not questions %} disabled {% endif %}>إنشاء امتحان</button>
     </form>
 
     {% if questions %}
-    <h2>Generated Questions:</h2>
+    <h2>الأسئلة:</h2>
     <ul>
         {% for question in questions %}
             <li>{{ question.question_text }}</li>
         {% endfor %}
     </ul>
     {% endif %}
-</body>
-</html>
+</div>
+{% endblock %}

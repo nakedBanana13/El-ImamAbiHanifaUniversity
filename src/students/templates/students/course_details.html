@@ -5,35 +5,51 @@
 {% endblock %}
 
 {% block content %}
-    <h1>
-        {{ module.title }}
-    </h1>
-    <div>
-        <h3>Modules</h3>
-        <ul>
+  <div class="container-fluid">
+    <div class="row">
+        <!-- Side Panel -->
+        <div class="col-md-3">
+            <div class="side-panel">
+                <ul id="modules" class="list-group">
+                  <h3 class="text-center">الوحدات</h3>
             {% for m in object.modules.all %}
              {% if m.is_active %}
-                <li data-id="{{ m.id }}" {% if m == module %} class="selected" {% endif %}>
-                    <a href="{% url 'student_course_details_module' object.id m.id %}">
-                    <span>
-                      Module <span class="order">{{ m.order|add:1 }}</span>
-                    </span>
-                    <br>
-                    {{ m.title }}
-                    </a>
-                </li>
+                <li data-id="{{ m.id }}" {% if m == module %} class="list-group-item selected"{% else %} class="list-group-item"{% endif %}>
+                    <div class="row">
+                              <div class="col-3 col-sm-2">
+                                <span class="order">{{ m.order|add:1 }}</span>
+                              </div>
+                              <div class="col-9 col-sm-10">
+                                <a href="{% url 'student_course_details_module' object.id m.id %}" class="text-muted">
+                                  {{ m.title }}
+                                </a>
+                              </div>
+                            </div>
+                        </li>
              {% endif %}
                 {% empty %}
-                <li>No modules yet.</li>
-            {% endfor %}
+                        <li class="list-group-item">لا توجد وحدات بعد.</li>
+                    {% endfor %}
         </ul>
     </div>
-    <div>
+</div>
+        <div class="col-md-9">
+            <div class="main-content">
+                <h2>الوحدة {{ module.order|add:1 }}: {{ module.title }}</h2>
+                <div id="module-contents">
         {% for content in module.contents.all %}
             {% with item=content.item %}
                 <h2>{{ item.title }}</h2>
                 {{ item.render }}
             {% endwith %}
+                    {% empty %}
+                        <p>لا تحتوي هذه الوحدة على محتوى بعد.</p>
         {% endfor %}
     </div>
+                        </div>
+        </div>
+        </div>
+
+  </div>
+
 {% endblock %}

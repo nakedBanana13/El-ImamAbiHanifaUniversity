@@ -2,26 +2,31 @@
 
 {% block title %}
   {% if object %}
-    Edit content "{{ object.title }}"
+    تعديل المحتوى "{{ object.title }}"
   {% else %}
-    Add new content
+    إضافة محتوى جديد
   {% endif %}
 {% endblock %}
 
 {% block content %}
   <h1>
     {% if object %}
-      Edit content "{{ object.title }}"
+      تعديل المحتوى "{{ object.title }}"
     {% else %}
-      Add new content
+      إضافة محتوى جديد
     {% endif %}
   </h1>
-  <div>
-    <form action="" method="post" enctype="multipart/form-data">
+  <div class="body-form bg-white mt-5">
+    <form action="" method="post" enctype="multipart/form-data" class="container">
+      <div class="form-group">
       {{ form.as_p }}
+      </div>
       {% csrf_token %}
-      <p><input type="submit" value="Save content"></p>
-      <a href="{% url 'module_content_list' module_id %}"><button type="button">Cancel</button></a>
+      {% for error in form.errors %}
+            <p>{{error}}</p>
+        {% endfor %}
+      <button type="submit" class="btn btn-primary me-2" name="action" value="save">حفظ <i class="fa-regular fa-floppy-disk"></i></button>
+      <a href="{% url 'module_content_list' module_id %}" class="btn btn-secondary">إلغاء</a>
     </form>
   </div>
 {% endblock %}

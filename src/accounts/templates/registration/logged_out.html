@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Logged out{% endblock %}
+{% block title %}تم تسجيل الخروج بنجاح{% endblock %}
 
 {% block content %}
-  <h1>Logged out</h1>
-  <p>
-    You have been successfully logged out.
-    You can <a href="{% url 'login' %}">log-in again</a>.
-  </p>
+  <div class="jumbotron green-jumbotron">
+        <div class="container">
+            <h1>تم تسجيل الخروج</h1>
+            <p>لقد تم تسجيل خروجك بنجاح.</p>
+            <p>يمكنك <a href="{% url 'login' %}">تسجيل الدخول مرة أخرى</a>.</p>
+        </div>
+    </div>
 {% endblock %}
