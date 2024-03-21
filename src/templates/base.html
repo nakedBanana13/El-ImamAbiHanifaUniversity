@@ -35,7 +35,7 @@
           {% if request.user.is_student %}
           <a href="{% url 'dashboard' %}">
             {% else %}
-          <a href="manage_course_list">
+          <a href="{% url 'manage_course_list' %}">
             {% endif %}
                 <img style="margin-right: 1rem;" src="{{ request.user.photo.url }}" class="img-profile-nav rounded-circle" alt="profile picture" width="60" height="60">
           </a>
