@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['abi-hanifah-university.org', 'www.abi-hanifah-university.org']
+ALLOWED_HOSTS = ['abi-hanifah-university.org', 'www.abi-hanifah-university.org', '91.108.120.202']
 
 
 # Application definition
