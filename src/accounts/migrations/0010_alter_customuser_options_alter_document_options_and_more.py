@@ -20,10 +20,10 @@ class Migration(migrations.Migration):
             name='customuser',
             options={'verbose_name': 'المستخدم', 'verbose_name_plural': 'المستخدمين'},
         ),
-        migrations.AlterModelOptions(
-            name='document',
-            options={'verbose_name': 'المستند', 'verbose_name_plural': 'المستندات'},
-        ),
+        #migrations.AlterModelOptions(
+        #    name='document',
+        #    options={'verbose_name': 'المستند', 'verbose_name_plural': 'المستندات'},
+        #),
         migrations.AlterModelOptions(
             name='instructor',
             options={'verbose_name': 'المدرس', 'verbose_name_plural': 'المدرسون'},
@@ -77,21 +77,21 @@ class Migration(migrations.Migration):
             name='user_permissions',
             field=models.ManyToManyField(blank=True, related_name='customuser_set', to='auth.permission', verbose_name='صلاحيات المستخدم'),
         ),
-        migrations.AlterField(
-            model_name='document',
-            name='document',
-            field=models.FileField(upload_to=accounts.models.user_directory_path, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['.txt', '.pdf', '.docx', '.pptx', '.xls'])], verbose_name='المستند'),
-        ),
-        migrations.AlterField(
-            model_name='document',
-            name='uploaded_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='تاريخ الرفع'),
-        ),
-        migrations.AlterField(
-            model_name='document',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='المستخدم'),
-        ),
+        #migrations.AlterField(
+        #    model_name='document',
+        #    name='document',
+        #    field=models.FileField(upload_to=accounts.models.user_directory_path, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['.txt', '.pdf', '.docx', '.pptx', '.xls'])], verbose_name='المستند'),
+        #),
+        #migrations.AlterField(
+        #    model_name='document',
+        #    name='uploaded_at',
+        #    field=models.DateTimeField(auto_now_add=True, verbose_name='تاريخ الرفع'),
+        #),
+        #migrations.AlterField(
+        #    model_name='document',
+        #    name='user',
+        #    field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='المستخدم'),
+        #),
         migrations.AlterField(
             model_name='instructor',
             name='user',

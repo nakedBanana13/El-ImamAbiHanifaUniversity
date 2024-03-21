@@ -14,13 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from accounts.views import ServeDocumentView, ServePhotoView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-
+from news.views import contact_us
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,8 +29,8 @@ urlpatterns = [
     path('exam/', include('exams.urls')),
     path('chat/', include('chat.urls', namespace='chat')),
     path('news/', include('news.urls')),
-    path('documents/<str:username>/<int:document_id>/', ServeDocumentView.as_view(), name='serve_document'),
-    path('<str:username>/profile_pic/', ServePhotoView.as_view(), name='serve_photo'),
+    #path('documents/<str:username>/<int:document_id>/', ServeDocumentView.as_view(), name='serve_document'),
+    #path('<str:username>/profile_pic/', ServePhotoView.as_view(), name='serve_photo'),
     #path('', CourseListView.as_view(), name='course_list'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('university_management/', TemplateView.as_view(template_name='management/university_management.html'), name='university_management'),
@@ -53,6 +52,7 @@ urlpatterns = [
     path('eulum/shareia/derasat', TemplateView.as_view(template_name='eulum/shareia/derasat.html'), name='derasat'),
     path('eulum/arabia/na7o', TemplateView.as_view(template_name='eulum/arabia/na7o.html'), name='na7o'),
     path('eulum/arabia/balagha', TemplateView.as_view(template_name='eulum/arabia/bala3\'a.html'), name='balagha'),
+    path('contact/', contact_us, name='contact_us'),
 ]
 
 if settings.DEBUG:

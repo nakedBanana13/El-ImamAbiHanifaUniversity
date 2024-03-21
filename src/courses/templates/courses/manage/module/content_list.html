@@ -6,15 +6,17 @@
 
 {% block content %}
 {% with course=module.course %}
-  <h1 class="text-center">الدورة "{{ course.title }}"</h1>
+
   <div class="container-fluid">
     <div class="row">
         <!-- Side Panel -->
         <div class="col-md-3">
             <div class="side-panel">
+                <ul class="list-group">
+                    <h1 class="text-center">الدورة "{{ course.title }}"</h1></ul>
                 <ul id="modules" class="list-group">
-                  <h3 class="text-center">الوحدات</h3>
-                    {% for m in course.modules.all %}
+
+                    {% for m in course.modules.all|sort_by:'order' %}
                         <li data-id="{{ m.id }}" {% if m == module %} class="list-group-item selected"{% else %} class="list-group-item"{% endif %}>
                             <div class="row">
                               <div class="col-3 col-sm-2">
@@ -30,9 +32,12 @@
                     {% empty %}
                         <li class="list-group-item">لا توجد وحدات بعد.</li>
                     {% endfor %}
-                  <a href="{% url 'course_module_update' course.id %}" class="btn btn-primary">تعديل الوحدات <i class="fa-regular fa-pen-to-square"></i></a>
+                </ul>
+                <ul class="list-group">
+                   <a href="{% url 'course_module_update' course.id %}" class="btn btn-primary">تعديل الوحدات <i class="fa-regular fa-pen-to-square"></i></a>
                     <a href="{% url 'manage_course_list' %}" class="btn btn-secondary">الرجوع إلى دوراتي</a>
                 </ul>
+
             </div>
         </div>
 
@@ -77,12 +82,13 @@
 
 {% block domready %}
   $('#modules').sortable({
-    stop: function(event, ui) { modules_order = {};
+    stop: function(event, ui) {modules_order = {};
       $('#modules').children().each(function(){
         // Update the order field
         $(this).find('.order').text($(this).index() + 1);
         // Associate the module's id with its order
         modules_order[$(this).data('id')] = $(this).index();
+
     });
       $.ajax({
         type: 'POST',

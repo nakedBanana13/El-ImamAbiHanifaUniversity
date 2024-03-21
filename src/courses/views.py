@@ -1,9 +1,11 @@
 from accounts.models import Instructor
 from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.apps import apps
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count
 from django.forms import modelform_factory, model_to_dict
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
@@ -65,7 +67,7 @@ class CourseCreateView(OwnerCourseEditMixin, CreateView):
             course = form.save(commit=False)
             course.owner = instructor
             course.save()
-
+            messages.success(self.request, 'تم إنشاء الدورة بنجاح.')
             return redirect('manage_course_list')
         else:
             # Redirect the user to the login page if they're not authenticated
@@ -85,10 +87,28 @@ class CourseUpdateView(OwnerCourseEditMixin, UpdateView):
         initial['faculty'] = faculty_dict['id']
         return initial
 
+    def form_valid(self, form):
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            instructor = get_object_or_404(Instructor, user=user)
+
+            course = form.save(commit=False)
+            course.owner = instructor
+            course.save()
+
+            messages.success(self.request, 'تم تحديث الدورة بنجاح.')
+            return super().form_valid(form)
+        else:
+            return redirect('login')
+
 
 class CourseDeleteView(OwnerCourseMixin, DeleteView):
     template_name = 'courses/manage/course/delete.html'
     permission_required = 'courses.delete_course'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'تم حذف الدورة بنجاح.')
+        return super().delete(request, *args, **kwargs)
 
 
 class CourseListView(TemplateResponseMixin, View):
@@ -121,12 +141,14 @@ class ModuleCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.course = Course.objects.get(pk=self.kwargs['pk'])
+        messages.success(self.request, 'تم إنشاء الوحدة بنجاح.')
         return super().form_valid(form)
 
     def get_success_url(self):
         # If 'action' is 'save_and_add_another', redirect to the module create view again
         if self.request.POST.get('action') == 'save_and_add_another':
             return reverse_lazy('module_create', kwargs={'pk': self.kwargs['pk']})
+        messages.success(self.request, 'تم إنشاء الوحدة بنجاح.')
         return reverse_lazy('course_module_update', kwargs={'pk': self.kwargs['pk']})
 
 
@@ -136,7 +158,8 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
     course = None
 
     def get_formset(self, data=None):
-        return ModuleFormSet(instance=self.course, data=data)
+        ordered_modules = self.course.modules.order_by('order')
+        return ModuleFormSet(instance=self.course, queryset=ordered_modules, data=data)
 
     """attempts to delegate to a lowercase method  that matches the HTTP method used. A GET request is delegated to the 
        get() method and a POST request to post() """
@@ -153,7 +176,9 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
         formset = self.get_formset(data=request.POST)
         if formset.is_valid():
             formset.save()
+            messages.success(request, 'تم حفظ التغييرات بنجاح.')
             return redirect('manage_course_list')
+        messages.error(request, 'يرجى تصحيح الأخطاء في النموذج أدناه.')
         return self.render_to_response({'course': self.course, 'formset': formset})
 
 
@@ -214,8 +239,9 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
 
             if not id:
                 Content.objects.create(module=self.module, item=obj)
+            messages.success(request, 'تم حفظ المحتوى بنجاح.')
             return redirect('module_content_list', self.module.id)
-
+        messages.error(request, 'يرجى تصحيح الأخطاء في النموذج أدناه.')
         return self.render_to_response({'form': form, 'object': self.obj, 'module_id': module_id})
 
 
@@ -226,6 +252,7 @@ class ContentDeleteView(View):
         module = content.module
         content.item.delete()
         content.delete()
+        messages.success(request, 'تم حذف المحتوى بنجاح.')
         return redirect('module_content_list', module.id)
 
 
@@ -240,7 +267,7 @@ class ModuleContentListView(TemplateResponseMixin, View):
 class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
     def post(self, request):
         for id, order in self.request_json.items():
-            Module.objects.filter(id=id, course__owner=request.user.instructor_profile).update(order=order)
+            Module.objects.filter(id=id, course__owner=request.user.instructor).update(order=order)
         return self.render_json_response({'saved': 'OK'})
 
 
@@ -249,3 +276,13 @@ class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
         for id, order in self.request_json.items():
             Content.objects.filter(id=id, module__course__owner=request.user.instructor_profile).update(order=order)
         return self.render_json_response({'saved': 'OK'})
+
+
+def get_subjects_view(request):
+    if request.method == 'GET' and 'faculty_id' in request.GET:
+        faculty_id = request.GET.get('faculty_id')
+        subjects = Subject.objects.filter(faculty_id=faculty_id)
+        subjects_data = [{'id': subject.id, 'title': subject.title} for subject in subjects]
+        return JsonResponse(subjects_data, safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid request'})

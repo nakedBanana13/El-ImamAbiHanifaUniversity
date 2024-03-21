@@ -10,5 +10,5 @@ urlpatterns = [
     path('generate/<int:question_bank_id>/', CreateExamFromQuestionBankView.as_view(),
          name='generate_exam_from_question_bank'),
     path('take/<str:token>/', ExamView.as_view(), name='exam_view'),
-    path('<str:token>/corrected/', DisplayCorrectedAnswersView.as_view(), name='display_corrected_answers')
+    path('<str:token>/corrected/', DisplayCorrectedAnswersView.as_view(), name='display_corrected_answers'),
 ]

@@ -28,3 +28,22 @@
     </form>
 </div>
 {% endblock %}
+{% block domready %}
+$('#id_faculty').change(function(){
+      var facultyId = $(this).val();
+      $.ajax({
+        url: '/course/faculty/subjects/',
+        type: 'GET',
+        data: {'faculty_id': facultyId},
+        success: function(response){
+          $('#id_subject').empty();
+          $.each(response, function(index, subject){
+            $('#id_subject').append('<option value="'+subject.id+'">'+subject.title+'</option>');
+          });
+        },
+        error: function(xhr, errmsg, err){
+          console.log(xhr.status + ": " + xhr.responseText);
+        }
+      });
+    });
+{% endblock %}

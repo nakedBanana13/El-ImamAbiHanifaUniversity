@@ -10,3 +10,7 @@ def model_name(obj):
         return obj._meta.model_name
     except AttributeError:
         return None
+
+@register.filter
+def sort_by(queryset, order):
+    return queryset.order_by(order)

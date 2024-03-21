@@ -8,6 +8,7 @@
     <form method="post" class="mt-4">
         {% csrf_token %}
         {{ form.as_p }}
+        <a href="{% url 'manage_course_list' %}" class="btn btn-secondary">الرجوع إلى دوراتي</a>
         <button type="submit" class="btn btn-primary me-2" name="generate" value="generate">إنشاء أسئلة <i class="fas fa-file-alt"></i></button>
         <button type="submit" class="btn btn-success me-2" name="confirm" value="confirm" {% if not questions %} disabled {% endif %}>إنشاء امتحان</button>
     </form>
@@ -21,4 +22,5 @@
     </ul>
     {% endif %}
 </div>
+<br>
 {% endblock %}

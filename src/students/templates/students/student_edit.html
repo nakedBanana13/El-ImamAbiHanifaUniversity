@@ -1,28 +1,19 @@
 {% extends "base.html" %}
-
-{% block title %}Profile{% endblock %}
+{% load static %}
+{% block title %}تعديل بياناتي{% endblock %}
 
 {% block content %}
-    <h1>Edit Student Details</h1>
+    <h1 class="text-center">تعديل بياناتي</h1>
 <div class="container">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div>
-            <label>Photo:</label>
-            {% if form.instance.user.photo %}
-                <img src="{{ form.instance.user.photo.url }}" alt="Profile_Photo" style="max-width: 200px; max-height: 200px;">
-                <input type="checkbox" name="clear_photo" id="id_clear_photo"> <label>Clear Photo</label>
-            {% else %}
-                <img src="{% static 'images/default_profile_pic.jpg }}" alt="Profile_Photo" style="max-width: 200px; max-height: 200px;">
-            {% endif %}
-            <input type="file" name="photo">
-        </div>
         {{ form.as_p }}
         <div class="mb-3">
         <button type="submit" class="btn btn-success me-2" name="action" value="save">حفظ <i class="fa-regular fa-floppy-disk"></i></button>
             <a href="{% url 'password_change' %}"class="btn btn-warning">تغيير كلمة السر</a>
             <a href="{% url 'dashboard' %}" class="btn btn-primary">رجوع</a>
             </div>
+        <input type="file" class="custom-file-input">
     </form>
 
 

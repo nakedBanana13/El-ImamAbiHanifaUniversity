@@ -1,12 +1,9 @@
-from os.path import basename
 from django.conf import settings
 from django.contrib import admin
 from django.core.mail import send_mail
-from django.urls import reverse
 from django.utils.html import format_html
 from django.contrib.admin import ModelAdmin
-from django.utils.safestring import mark_safe
-from .models import Student, Instructor, Document
+from .models import Student, Instructor, CustomUser
 from .forms import InstructorAdminForm
 
 
@@ -36,10 +33,10 @@ class BaseUserAdminMixin():
     def view_photo_link(self, obj):
         if obj.user.photo:
             photo_url = obj.user.photo.url
-            return format_html('<a href="{}">عرض الصورة</a>', photo_url)
+            return format_html('<a href="{}" target="_blank">عرض الصورة</a>', photo_url)
         return "لا توجد صورة"
 
-    view_photo_link.short_description = "رابط الصورة"
+    view_photo_link.short_description = "الصورة الشخصية"
 
     def get_date_of_birth(self, obj):
         return obj.user.date_of_birth
@@ -99,40 +96,41 @@ class UserActionMixin():
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin, BaseUserAdminMixin, UserActionMixin):
-    list_display = BaseUserAdminMixin.list_display + ('faculty', 'study_year', 'view_documents')
-    list_filter = ('faculty', 'study_year', 'user__is_active', 'user__is_approved')
-    search_fields = ('user__first_name', 'user__last_name', 'user__email')
-    search_help_text = 'Search by first name, last name, email'
+    list_display = BaseUserAdminMixin.list_display + ('faculty', 'study_year', 'father_name', 'country_born','country_of_residence', 'phone_number', 'qualification', 'language', 'view_id_photo_link', 'view_certificate_link')
+    list_filter = ('faculty', 'study_year', 'qualification', 'language', 'country_of_residence', 'user__is_active', 'user__is_approved')
+    search_fields = ('phone_number', 'user__first_name', 'user__last_name', 'user__email', 'user__username')
+    search_help_text = 'ابحث عن طالب عن طريق اسم المستخدم, الاسم, اللقب, البريد الالكتوني أو رقم الهاتف'
     actions = UserActionMixin.actions
 
-    def view_documents(self, obj):
-        documents = Document.objects.filter(user=obj.user)
-        if documents.exists():
-            document_list = ['<li><a href="{}">{}</a></li>'.format(
-                reverse('serve_document', kwargs={'username': obj.user.username, 'document_id': doc.id}),
-                basename(doc.document.name)
-            ) for doc in documents]
-            return mark_safe('<ul>{}</ul>'.format(''.join(document_list)))
-        else:
-            return "No documents"
+    def view_id_photo_link(self, obj):
+        if obj.user.photo:
+            photo_url = obj.id_photo.url
+            return format_html('<a href="{}" target="_blank">عرض الهوية</a>', photo_url)
+        return "لا توجد هوية مثبتة"
 
-    view_documents.short_description = "Documents"
+    view_id_photo_link.short_description = "الهوية المثبتة"
+
+    def view_certificate_link(self, obj):
+        if obj.user.photo:
+            photo_url = obj.certificate_photo.url
+            return format_html('<a href="{}" target="_blank">عرض الشهادة</a>', photo_url)
+        return "لا توجد شهادة"
+
+    view_certificate_link.short_description = "المؤهل العلمي"
 
 
-#@admin.register(CustomUser)
-#class CustomUserAdmin(ModelAdmin):
-#    list_display = ('id', 'first_name', 'last_name', 'email', 'username', 'date_of_birth', 'is_student', 'is_active', 'is_approved', 'view_photo_link')
-#    list_filter = ('is_active', 'is_approved', 'is_student')
-#    search_fields = ('first_name', 'last_name', 'email', 'username')
-#    search_help_text = 'Search by first name, last name, email, username'
-#
-#    def view_photo_link(self, obj):
-#        if obj.photo:
-#            url = reverse('serve_photo', kwargs={'username': obj.username})
-#            return format_html('<a href="{}">View Photo</a>', url)
-#        return "No photo"
-#
-#    view_photo_link.short_description = "Photo Link"
+@admin.register(CustomUser)
+class CustomUserAdmin(ModelAdmin):
+    list_display = ('id', 'first_name', 'last_name', 'email', 'username', 'date_of_birth', 'is_student', 'is_active', 'is_approved', 'view_photo_link')
+    list_filter = ('is_active', 'is_approved', 'is_student')
+    search_fields = ('first_name', 'last_name', 'email', 'username')
+    search_help_text = 'ابحث عن طالب عن طريق اسم المستخدم, الاسم, اللقب أو البريد الالكتوني '
+
+    def view_photo_link(self, obj):
+        if obj.photo:
+            photo_url = obj.photo.url
+            return format_html('<a href="{}" target="_blank">عرض الصورة</a>', photo_url)
+        return "لا توجد صورة"
 
 
 @admin.register(Instructor)
@@ -142,35 +140,35 @@ class InstructorAdmin(ModelAdmin, BaseUserAdminMixin, UserActionMixin):
     actions = UserActionMixin.actions
 
 
-class ExtensionListFilter(admin.SimpleListFilter):
-    title = 'Extension'
-    parameter_name = 'extension'
+#class ExtensionListFilter(admin.SimpleListFilter):
+#    title = 'Extension'
+#    parameter_name = 'extension'
+#
+#    def lookups(self, request, model_admin):
+#        documents = Document.objects.exclude(document='').values_list('document', flat=True)
+#        extensions = {doc.split('.')[-1] for doc in documents}
+#        return [(ext, ext) for ext in extensions]
+#
+#    def queryset(self, request, queryset):
+#        if self.value():
+#            documents = Document.objects.exclude(document='').filter(document__endswith=f".{self.value()}")
+#            document_ids = documents.values_list('id', flat=True)
+#            return queryset.filter(id__in=document_ids)
+#        return queryset
 
-    def lookups(self, request, model_admin):
-        documents = Document.objects.exclude(document='').values_list('document', flat=True)
-        extensions = {doc.split('.')[-1] for doc in documents}
-        return [(ext, ext) for ext in extensions]
 
-    def queryset(self, request, queryset):
-        if self.value():
-            documents = Document.objects.exclude(document='').filter(document__endswith=f".{self.value()}")
-            document_ids = documents.values_list('id', flat=True)
-            return queryset.filter(id__in=document_ids)
-        return queryset
-
-
-@admin.register(Document)
-class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'uploaded_at', 'view_document_link')
-    list_filter = (ExtensionListFilter, 'user')
-    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email', 'uploaded_at']
-    search_help_text = 'Search by first name, last name, email, username, uploaded date'
-
-    def view_document_link(self, obj):
-        if obj.document:
-            url = reverse('serve_document', kwargs={'username': obj.user.username, 'document_id': obj.id})
-            return format_html('<a href="{}">عرض المستند</a>', url)
-        return "لا يوجد مستند"
-
-    view_document_link.short_description = "رابط المستند"
+#@admin.register(Document)
+#class DocumentAdmin(admin.ModelAdmin):
+#    list_display = ('user', 'uploaded_at', 'view_document_link')
+#    list_filter = (ExtensionListFilter, 'user')
+#    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email', 'uploaded_at']
+#    search_help_text = 'Search by first name, last name, email, username, uploaded date'
+#
+#    def view_document_link(self, obj):
+#        if obj.document:
+#            url = reverse('serve_document', kwargs={'username': obj.user.username, 'document_id': obj.id})
+#            return format_html('<a href="{}">عرض المستند</a>', url)
+#        return "لا يوجد مستند"
+#
+#    view_document_link.short_description = "رابط المستند"
 

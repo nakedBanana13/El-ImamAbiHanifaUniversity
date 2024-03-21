@@ -26,7 +26,7 @@
 <body>
 
 <div class="exam-time-left">
-    <p class="float-left bg-danger text-light text-center px-2 fixed-top">الوقت المتبقي: <span class="">60</span> دقيقة</p>
+    <p id="countdown" class="float-left bg-danger text-light text-center px-2 fixed-top">الوقت المتبقي: <span class="">60</span> دقيقة</p>
 </div>
 <br>
 <section class="section">
@@ -56,15 +56,99 @@
 
 <section class="section">
     <div class="container">
-        <form method="post">
+        <form id="confirmForm" method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="answer-center d-flex justify-content-center mt-4">
-                <button type="submit" class="btn btn-primary px-4 py-2">تأكيد الأجوبة</button>
+                <button type="button" id="confirmButton" class="btn btn-primary px-4 py-2">تأكيد الأجوبة</button>
             </div>
         </form>
     </div>
 </section>
+
+       <input type="hidden" id="time-remaining" value="{{ time_remaining_minutes|floatformat:'0' }}">
+
 <br>
 </body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmButton = document.getElementById('confirmButton');
+    const confirmForm = document.getElementById('confirmForm');
+
+    function preventBack() {
+        window.history.replaceState(null, "", window.location.href);
+    }
+
+    confirmButton.addEventListener('click', function() {
+        const unansweredQuestions = checkUnansweredQuestions();
+        if (unansweredQuestions.length > 0) {
+            const confirmMessage = "لديك أسئلة لم تُجِب عليها. هل أنت متأكد أنك تريد تأكيد إجاباتك؟";
+            const isConfirmed = confirm(confirmMessage);
+            if (isConfirmed) {
+                preventBack();
+                confirmForm.submit();
+                sessionStorage.clear();
+            }
+        } else {
+            const isConfirmed = confirm("هل أنت متأكد أنك تريد إرسال إجاباتك؟");
+            if (isConfirmed) {
+                preventBack();
+                confirmForm.submit();
+                sessionStorage.clear();
+            }
+        }
+    });
+
+    function checkUnansweredQuestions() {
+    const form = document.getElementById('confirmForm');
+    const inputs = form.querySelectorAll('input[type="radio"]');
+    const answeredQuestions = new Set();
+    inputs.forEach(input => {
+        if (input.checked) {
+            const questionId = input.name.split('_')[1];
+            answeredQuestions.add(questionId);
+        }
+    });
+    const allQuestions = form.querySelectorAll('input[type="radio"]');
+    const allQuestionIds = Array.from(allQuestions).map(input => input.name.split('_')[1]);
+    const unansweredQuestions = allQuestionIds.filter(questionId => !answeredQuestions.has(questionId));
+    return unansweredQuestions;
+}
+
+
+    var timeRemainingMinutes = parseInt(document.getElementById("time-remaining").value);
+    var totalSeconds = sessionStorage.getItem('totalSeconds');
+    if (!totalSeconds) {
+        timeRemainingMinutes = parseInt(document.getElementById("time-remaining").value);
+        totalSeconds = Math.floor(timeRemainingMinutes * 60);
+    }
+
+    function updateCountdown() {
+        if (!isNaN(totalSeconds) && totalSeconds > 0) {
+            var hours = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds % 3600) / 60);
+            var seconds = totalSeconds % 60;
+            totalSeconds = hours * 3600 + minutes * 60 + seconds;
+            sessionStorage.setItem('totalSeconds', totalSeconds);
+
+            hours = (hours < 10) ? "0" + hours : hours;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+            document.getElementById("countdown").innerHTML = "الوقت المتبقي: " + hours + ":" + minutes + ":" + seconds;
+
+            totalSeconds--;
+            setTimeout(updateCountdown, 1000);
+        } else {
+            document.getElementById("countdown").innerHTML = "انتهى الوقت!";
+            preventBack();
+            document.getElementById('confirmForm').submit();
+            sessionStorage.clear();
+        }
+    }
+
+    updateCountdown();
+});
+
+</script>
 </html>

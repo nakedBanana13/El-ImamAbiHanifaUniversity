@@ -8,16 +8,13 @@
 <section class="section mt-5">
       <div class="container">
         <div class="row">
-          <div class="col-12">
-            <img src="{{ user.photo.url }}" width="70" height="70" alt="profile_pic" class="float-right ml-4">
-            <div class="float-right ">
+          <div class="col-12 float-right">
               <h3 class="mt-3">{{ user.first_name }} {{ user.last_name }}</h3>
-            </div>
+              <a href="{% url 'password_change' %}"class="btn btn-warning">تغيير كلمة السر</a>
           </div>
         </div>
       </div>
     </section>
-
 
     <h1 class="text-center">دوراتي</h1>
 
@@ -26,11 +23,14 @@
       <div class="container">
     {% for course in object_list %}
         <div class="col-12 mb-5">
-          <h3>{{ course.title }}</h3>
+              <h3>{{ course.title }}</h3>
+
           <h6 class="text-muted">{{ course.faculty }}</h6>
           <h6 class="text-muted">{{ course.subject }}</h6>
           <h6 class="text-muted">{{ course.study_year }}</h6>
           <h6 class="text-muted">{% if course.is_active %}منشور {% else %}غير منشور{% endif %}</h6>
+            <div class="status-circle {% if course.is_active %}active-circle{% else %}inactive-circle{% endif %}"></div>
+
           <div class="list-group list-group-horizontal text-center">
             <a href="{% url 'course_edit' course.id %}" class="list-group-item list-group-item-action">تحرير <i class="fa-regular fa-pen-to-square"></i></a>
             <a href="{% url 'course_delete' course.id %}" class="list-group-item list-group-item-action">حذف <i class="fa-solid fa-trash"></i></a>
@@ -40,6 +40,8 @@
             {% endif %}
             <a href="{% url 'question_list' course.id %}" class="list-group-item list-group-item-action">بنك الأسئلة <i class="fas fa-book"></i></a>
             </div>
+
+          <hr>
         </div>
     {% empty %}
       <p>لم تقم بإنشاء أي دورات بعد.</p>

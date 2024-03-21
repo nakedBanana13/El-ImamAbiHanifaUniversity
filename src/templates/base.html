@@ -30,6 +30,17 @@
       <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom">
         <div class="container">
           <a class="navbar-brand" href="/"><img src="{% static 'images/logo.png' %}" class= "img-logo-nav" alt="logo"></a>
+          {% if request.user.is_authenticated %}
+            {% if request.user.photo %}
+          {% if request.user.is_student %}
+          <a href="{% url 'dashboard' %}">
+            {% else %}
+          <a href="manage_course_list">
+            {% endif %}
+                <img style="margin-right: 1rem;" src="{{ request.user.photo.url }}" class="img-profile-nav rounded-circle" alt="profile picture" width="60" height="60">
+          </a>
+            {% endif %}
+        {% endif %}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -93,6 +104,15 @@
 <a id="go_up_button"></a>
 
 <div id="content">
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">
+        {{ message|safe }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
     {% block content %}
     {% endblock %}
 </div>
@@ -104,14 +124,17 @@
     <div class="row">
       <div class="col-md-5 col-12 middle-foot">
         <h2 class="text-warning mt-2">تواصل معنا</h2> <br>
-        <form class="contact-us-form">
-
+        <form  method="post" class="contact-us-form" action="{% url 'contact_us' %}">
+{% csrf_token %}
           <div class="form-group">
             <p class="text-white">أرسل لنا رسالة:</p>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="محتوى الرسالة"></textarea>
+              <div class="form-group">
+            <input type="text" name="subject" class="form-control" placeholder="الموضوع" required>
+          </div>
+            <textarea class="form-control" name="message" id="exampleFormControlTextarea1" rows="3" placeholder="محتوى الرسالة" required></textarea>
           </div>
           <div class="form-group">
-            <input type="email" class="form-control" placeholder="أدخل الإيميل">
+            <input type="email" name="email" class="form-control" placeholder="أدخل الإيميل" required>
           </div>
           <button type="submit" class="btn btn-warning mb-4 button-send">إرسال </button>
         </form>
@@ -130,10 +153,9 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row social-icons-row">
       <div class="col-12">
         <div class="social-icons mb-2">
-          <p class="text-white">تابعونا على مواقع التواصل الاجتماعي </p>
           <p class="text-white">تابعونا على مواقع التواصل الاجتماعي </p>
           <a href="https://web.facebook.com/people/%D8%AC%D8%A7%D9%85%D8%B9%D8%A9-%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D9%85-%D8%A7%D9%84%D8%A3%D8%B9%D8%B8%D9%85-%D8%A3%D8%A8%D9%8A-%D8%AD%D9%86%D9%8A%D9%81%D8%A9-%D8%A7%D9%84%D9%86%D8%B9%D9%85%D8%A7%D9%86-%D8%B1%D8%B6%D9%8A-%D8%A7%D9%84%D9%84%D9%87-%D8%AA%D8%B9%D8%A7%D9%84%D9%89-%D8%B9%D9%86%D9%87/100075990244751/"> <i class="fab fa-facebook"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="https://www.youtube.com/@imamabuhanifaal-numanacademy"> <i class="fab fa-youtube"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -143,7 +165,6 @@
         </div>
       </div>
     </div>
-  </div>
 </footer>
 
     <!-- end Footer -->

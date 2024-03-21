@@ -33,7 +33,7 @@ class StudyYear(models.Model):
 
 
 class Subject(models.Model):
-    title = models.CharField(max_length=200, verbose_name='العنوان')
+    title = models.CharField(max_length=200, verbose_name='الاسم')
     slug = models.SlugField(max_length=200, unique=True, verbose_name='الرابط')
     faculty = models.ForeignKey(Faculty, related_name='subjects', on_delete=models.CASCADE, verbose_name='الكلية')
 
@@ -72,8 +72,20 @@ class Course(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)  # Generate slug from title
+        self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    #def save(self, *args, **kwargs):
+    #    if not self.slug:
+    #        # Generate slug from the Arabic title
+    #        self.slug = self.generate_arabic_slug(self.title)
+    #    super().save(*args, **kwargs)
+#
+    #def generate_arabic_slug(self, text):
+    #    # Transliterate Arabic text to Latin characters
+    #    latin_text = translit(text, 'arabic', reversed=True)
+    #    # Generate slug from transliterated text
+    #    return slugify(latin_text)[:200]
 
     def is_content_locked(self):
         return self.is_exam_active

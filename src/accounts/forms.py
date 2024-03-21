@@ -1,11 +1,12 @@
+import os
+import re
 from datetime import date
-
 from django import forms
-
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.forms.widgets import ClearableFileInput
-from .models import Instructor, CustomUser
+from django.utils.translation import gettext_lazy as _
+from .models import Instructor, CustomUser, Student
 from courses.models import Faculty, StudyYear
 
 
@@ -26,8 +27,8 @@ class MultiFileInput(forms.ClearableFileInput):
     template_name = 'widgets/multiple_file_input.html'
 
 
-class MultiFileField(forms.FileField):
-    widget = MultiFileInput
+#class MultiFileField(forms.FileField):
+#    widget = MultiFileInput
 
 
 class StudentRegistrationForm(forms.ModelForm):
@@ -36,27 +37,36 @@ class StudentRegistrationForm(forms.ModelForm):
     faculty = forms.ModelChoiceField(queryset=Faculty.objects.all())
     study_year = forms.ModelChoiceField(queryset=StudyYear.objects.all())
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    documents = MultiFileField(required=False)
+    #documents = MultiFileField(required=False)
+
+    father_name = forms.CharField(max_length=100)
+    country_born = forms.CharField(max_length=200)
+    country_of_residence = forms.CharField(max_length=200)
+    phone_number = forms.CharField(max_length=25)
+    qualification = forms.ChoiceField(choices=Student.QUALIFICATION_CHOICES)
+    language = forms.ChoiceField(choices=Student.LANGUAGES_CHOICES)
+    certificate_photo = forms.ImageField()
+    id_photo = forms.ImageField()
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'confirm_password', 'first_name', 'last_name', 'email', 'date_of_birth', 'photo', 'faculty', 'study_year', 'documents']
+        fields = ['username', 'password', 'confirm_password', 'first_name', 'last_name', 'email', 'date_of_birth', 'photo', 'faculty', 'study_year', 'father_name', 'country_born', 'country_of_residence', 'phone_number', 'qualification', 'language', 'certificate_photo', 'id_photo']
 
     def clean_confirm_password(self):
         password = self.cleaned_data.get('password')
         confirm_password = self.cleaned_data.get('confirm_password')
         if password and confirm_password and password != confirm_password:
-            raise forms.ValidationError("Passwords don't match")
+            raise forms.ValidationError("كلمات المرور غير متطابقة")
         return confirm_password
 
-    def clean_documents(self):
-        documents = self.cleaned_data.get('documents')
-        if documents:
-            # Ensure each uploaded file size is not more than 10MB
-            for doc in documents:
-                if len(doc) > 10 * 1024 * 1024:  # Check file size in bytes
-                    raise forms.ValidationError("File size exceeds 10MB limit")
-        return documents
+    #def clean_documents(self):
+    #    documents = self.cleaned_data.get('documents')
+    #    if documents:
+    #        # Ensure each uploaded file size is not more than 10MB
+    #        for doc in documents:
+    #            if len(doc) > 10 * 1024 * 1024:  # Check file size in bytes
+    #                raise forms.ValidationError("File size exceeds 10MB limit")
+    #    return documents
 
     def clean_date_of_birth(self):
         date_of_birth = self.cleaned_data.get('date_of_birth')
@@ -66,7 +76,7 @@ class StudentRegistrationForm(forms.ModelForm):
             age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
             # Check if age is reasonable
             if age < 10 or age > 100:
-                raise forms.ValidationError("Please enter a valid date of birth.")
+                raise forms.ValidationError("يرجى إدخال تاريخ ميلاد صحيح.")
         return date_of_birth
 
     def clean_email(self):
@@ -75,8 +85,18 @@ class StudentRegistrationForm(forms.ModelForm):
         allowed_domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'protonmail.com',
                            'mail.com', 'yandex.com']
         if domain not in allowed_domains:
-            raise ValidationError("Sorry, registration is only allowed with certain email providers.")
+            allowed_domains_str = ', '.join(allowed_domains)
+            raise ValidationError(f"عذرًا، لتسجيل فقط باستخدام مزودي البريد الإلكتروني التالية: {allowed_domains_str}.")
         return email
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        # Regular expression to match phone numbers consisting only of numbers,
+        # which may or may not start with '+'
+        # The pattern allows for '+' at the beginning, followed by zero or more digits
+        if not re.match(r'^\+?\d+$', phone_number):
+            raise ValidationError(_('الرجاء إدخال رقم هاتف صحيح، يجب أن يتكون فقط من أرقام وقد يبدأ بـ "+".'))
+        return phone_number
 
 
 class InstructorAdminForm(forms.ModelForm):
@@ -123,7 +143,7 @@ class InstructorAdminForm(forms.ModelForm):
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
         if password != confirm_password:
-            raise forms.ValidationError("Password and Confirm Password do not match.")
+            raise forms.ValidationError("كلمة السر و تأكيد كلمة السر غير متطابقين")
 
     def save(self, commit=True):
         instructor = super().save(commit=False)
@@ -156,6 +176,10 @@ class InstructorAdminForm(forms.ModelForm):
         else:
             # Update fields of the associated CustomUser instance
             user = instructor.user
+            if self.cleaned_data['photo']:
+                old_photo_path = user.photo.path
+                if os.path.exists(old_photo_path):
+                    os.remove(old_photo_path)
             user.username = self.cleaned_data['username']
             user.first_name = self.cleaned_data['first_name']
             user.last_name = self.cleaned_data['last_name']

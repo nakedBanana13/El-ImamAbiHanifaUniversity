@@ -2,7 +2,9 @@ from accounts.forms import StudentRegistrationForm
 from accounts.models import Student
 from braces.views import LoginRequiredMixin
 from courses.models import Course, Module
+from django.contrib import messages
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -21,51 +23,64 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
 
-        excluded_fields = ['password', 'confirm_password', 'photo', 'documents']
+        excluded_fields = ['password', 'confirm_password', 'certificate_photo', 'id_photo', 'qualification', 'username', 'first_name', 'father_name', 'last_name', 'date_of_birth', 'faculty', 'study_year', 'country_born', 'country_of_residence', 'language']
         for field_name in excluded_fields:
             if field_name in form.fields:
                 del form.fields[field_name]
 
         user = self.request.user
         form.initial['username'] = user.username
-        form.initial['email'] = user.email
+        form.initial['photo'] = user.photo
         form.initial['first_name'] = user.first_name
+        form.initial['father_name'] = user.student_profile.father_name
         form.initial['last_name'] = user.last_name
+        form.initial['email'] = user.email
+        form.initial['phone_number'] = user.student_profile.phone_number
         form.initial['date_of_birth'] = user.date_of_birth
         form.initial['faculty'] = user.student_profile.faculty
         form.initial['study_year'] = user.student_profile.study_year
+        form.initial['country_born'] = user.student_profile.country_born
+        form.initial['country_of_residence'] = user.student_profile.country_of_residence
+        form.initial['language'] = user.student_profile.language
 
-        disabled_fields = ['username', 'first_name', 'last_name', 'date_of_birth', 'faculty', 'study_year']
+        disabled_fields = []
         for field_name in disabled_fields:
             if field_name in form.fields:
                 form.fields[field_name].disabled = True
 
         return form
 
+    def clean(self):
+        cleaned_data = super().clean()
+        disabled_fields = ['username', 'first_name', 'father_name', 'last_name', 'date_of_birth', 'faculty', 'study_year', 'country_born', 'country_of_residence', 'language']
+        for field_name in disabled_fields:
+            if field_name in cleaned_data:
+                del cleaned_data[field_name]
+        return cleaned_data
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
-        # Handle clearing photo
-        if 'clear_photo' in self.request.POST:
-            if self.object.user.photo:
-                self.object.user.photo.delete()
+        user = self.request.user
+        user.email = form.cleaned_data['email']
+        user.student_profile.phone_number = form.cleaned_data['phone_number']
 
-        # Handle updating photo
         if 'photo' in self.request.FILES:
-            self.object.user.photo.save(
+            # Delete old photo if it exists
+            if user.photo:
+                # Get the path of the old photo
+                old_photo_path = user.photo.path
+                # Delete the old photo from storage
+                default_storage.delete(old_photo_path)
+
+            user.photo.save(
                 self.request.FILES['photo'].name,
                 ContentFile(self.request.FILES['photo'].read())
             )
 
-        self.object.save()
-
-        user = self.request.user
-        user.email = form.cleaned_data['email']
-        user.first_name = form.cleaned_data['first_name']
-        user.last_name = form.cleaned_data['last_name']
-        user.date_of_birth = form.cleaned_data['date_of_birth']
         user.save()
 
+        messages.success(self.request, 'تم تحديث الملف الشخصي بنجاح.')
         return HttpResponseRedirect(self.get_success_url())
 
 

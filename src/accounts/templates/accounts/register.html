@@ -1,13 +1,313 @@
 {% extends "base.html" %}
-
-{% block title %}User Registration{% endblock %}
+{% load static %}
+{% load countries %}
+{% block title %}تسجيل طالب جديد{% endblock %}
 
 {% block content %}
-   <h2>User Registration</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
+{% get_countries as countries %}
+
+<section class="bg-white mt-5">
+    <div class="container ">
+        <div class="py-5 text-center">
+            <img class="d-block mx-auto mb-4" src="{% static 'images/logo.png' %}" alt="logo" width="72" height="72">
+            <h2>التسجيل في جامعة الإمام الأعظم أبي حنيفة النعمان </h2>
+            <br>
+            <p class="lead">
+                بسم الله الرحمن الرحيم، الحمد لله حمدا يوافي نعمه، ويدفع نقمه، ويكافىء مزيده،والصلاة والسلام على خير خلق
+                الله، وآله وصحبه محمد سيدنا والتابعين لهم بإحسان إلى يوم الدين .
+                <br>
+                أما بعد الإخوة والأخوات الكرام:
+                <br>
+                بفضل الله تبارك وتعالى، وبعد الاستخارة، والاستشارة، تم افتتاح جامعة الإمام الأعظم أبي حنيفة النعمان رضي
+                الله تعالى عنه في مطلع عام 2022 م الموافق لعام 1443 هـ.
+                <br><br>
+                <span class="bg-text">نظام ومتطلبات الدراسة في الجامعة</span>
+                <br>
+                تأخذ كلية الشريعة الإسلامية وكلية اللغة العربية بجامعة الإمام الأعظم أبي حنيفة النعمان بنظام الفصول
+                الدراسية ، حيث يقسم العام الدراسي إلى فصلين دراسيين رئيسيين تكون فترة الدراسة في كل فصل دراسي ستة أشهر
+                يدخل ضمنها فترة التسجيل والإمتحانات.
+
+                و يعتمد نظام الدراسة في جامعة الإمام الأعظم أبي حنيفة النعمان على نظام التعليم الإلكتروني ويتكون من
+                الوسائل الآتية :
+                <br>
+                • التعلم الذاتي بواسطة الكتب الجامعية المقررة.
+                <br>
+                • الوسائل السمعية والبصرية.
+                <br>
+                • التعليم الإلكتروني (ONLINE - تعليم عن بعد ) بواسطة الإنترنت .
+                <br>
+                • هناك بعض اللقاءات التعليمية المباشرة.
+                <br>
+                • اللقاءات التعليمية تكون من خلال المواقع الالكترونية الخاصة بالجامعة عبر الإنترنت:
+                <br>
+                الموقع الرسمي للجامعة.
+                <br>
+                صفحة الجامعة على اليوتيوب
+                <br>
+                صفحة الجامعة على التيليغرام .
+                <br><br>
+                <span class="bg-text">الأقسام والتخصصات في الجامعة</span>
+                <br>
+                كلية الشريعة بأقسامها العشرة (القراءات _ القرآن الكريم وعلومه _ الحديث النبوي الشريف وعلومه _ السيرة
+                النبوية الشريفة _ العقائد ومقارنة الأديان _ الفقه المقارن _ الفقه وأصوله _ القضاء والإفتاء_ الدراسات
+                الإسلامية _ الدعوة الإسلامية والدعاة )
+                <br> وكلية اللغة العربية بقسميها (النحو والصرف _ البلاغة والأدب )
+                <br><br>
+                <span class="bg-text">مدة الدراسة للحصول على درجة البكالوريوس</span>
+                <br>
+                أربع سنوات ، تشمل ثمانية فصول دراسية.
+                <br><br>
+                <span>رسوم الدراسة في الجامعة</span>
+                <br>
+                1- 100 $ للسنة الدراسية الواحدة شاملة رسوم التسجيل والدراسة.
+                <br>
+                2- 50 $ للسنة الدراسية الواحدة شاملة رسوم التسجيل والدراسة للطلبة ذوي الظروف الخاصة, دون طلب إثباتات
+                منهم, وذلك حرصاً منّا على نشر العلم بالدرجة الأولى.
+                <br>
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Form errors:</strong>
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                    {{field}}
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+                    <h4 class="mb-5">البيانات المطلوبة</h4>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="firstName">الاسم</label>
+                            <input type="text" class="form-control" name="first_name" id="firstName" placeholder=""
+                                   value="" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_student_father_name" class="form-label">اسم الأب</label>
+                            <input type="text" class="form-control" name="father_name" id="id_student_father_name"
+                                   placeholder="" value="" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="lastName">اللقب</label>
+                            <input type="text" class="form-control" name="last_name" id="lastName" placeholder=""
+                                   value="" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="username">اسم المستخدم</label>
+                        <input type="text" class="form-control" name="username" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email">الإيميل</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com"
+                               required>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password">كلمة المرور</label>
+                            <input type="password" class="form-control" name="password" id="password" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password">تأكيد كلمة المرور</label>
+                            <input type="password" class="form-control" name="confirm_password" id="confirm_password"
+                                   required>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="birthday">تاريخ الميلاد</label>
+                            <input type="date" class="form-control" name="date_of_birth" id="birthday" placeholder=""
+                                   value="" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="countryBorn">بلد الميلاد</label>
+                            <select class="custom-select d-block w-100" name="country_born" id="countryBorn" required>
+                                <option value="">اختر البلد</option>
+                                {% for code, name in countries %}
+                                <option value="{{ code }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="country">بلد الإقامة الحالي</label>
+                            <select class="custom-select d-block w-100" name="country_of_residence" id="country"
+                                    required>
+                                <option value="">اختر البلد</option>
+                                {% for code, name in countries %}
+                                <option value="{{ code }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phoneNumber">رقم الهاتف</label>
+                            <input type="tel" class="form-control" name="phone_number" id="phoneNumber" placeholder="001234567890"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="certificate">المؤهل العلمي</label>
+                            <select class="custom-select d-block w-100" name="qualification" id="certificate" required>
+                                <option value="">اختر المؤهل العلمي</option>
+                        {% for value, label in form.fields.qualification.choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="language">اللغة الأم</label>
+                            <select class="custom-select d-block w-100" name="language" id="language" required>
+                                 <option value="">اختر لغتك الأم</option>
+                                {% for value, label in form.fields.language.choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="faculty">الكلية</label>
+                            <select class="custom-select d-block w-100" id="faculty" name="faculty" required>
+                                <option value="">اختر الكلية</option>
+                                {% for faculty in faculties %}
+                                <option value="{{ faculty.id }}">{{ faculty.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="study_year">العام الدراسي</label>
+                            <select class="custom-select d-block w-100" id="study_year" name="study_year" required>
+                                <option value="">اختر العام الدراسي</option>
+                                {% for study_year in study_years %}
+                                <option value="{{ study_year.id }}">{{ study_year.year }} - {{ study_year.semester }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 mt-5 mb-2">
+                            <p>الشهادة الثانوية أو إجازة في القرآن الكريم أو شهادة شرعية</p>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" name="certificate_photo" class="custom-file-input"
+                                           id="inputcertificate" onchange="updateFileLabel('inputcertificate')"
+                                           aria-describedby="inputGroupFileAddon04" required>
+                                    <label class="custom-file-label" for="inputcertificate"><p class="mr-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;اختر
+                                        ملفاً</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;اختر ملفاً </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 mt-3 mb-2">
+                            <p>صورة إثبات الشخصية (جواز السفر أو بطاقة الهوية أو قيد مدني)</p>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" name="id_photo" class="custom-file-input" id="id_photo"
+                                           onchange="updateFileLabel('id_photo')"
+                                           aria-describedby="inputGroupFileAddon04" required>
+                                    <label class="custom-file-label" for="id_photo"><p class="mr-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;اختر
+                                        ملفاً</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;اختر ملفاً </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 mt-3 mb-5">
+                            <p>صورة شخصية حديثة مقاس 6x4</p>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" name="photo" class="custom-file-input" id="photo"
+                                           onchange="updateFileLabel('photo')" aria-describedby="inputGroupFileAddon04"
+                                           required>
+                                    <label class="custom-file-label" for="photo"><p class="mr-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;اختر
+                                        ملفاً</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;اختر ملفاً </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <hr class="mb-4">
+                            <h4 class="text-center">اطّلع على شروط التسجيل</h4>
+                            <br>
+                            <ol>
+                                <li>على الطالب كتابة البيانات الشخصية بالشكل الصحيح في النموذج المرفق بقسم القبول
+                                    والتسجيل ويتحمل كامل المسؤولية عن البيانات الشخصية.
+                                </li>
+                                <li>لا يسمح للطالب باستخراج البطاقة الجامعية إلا بعد استكمال إجراءات التسجيل ودفع الرسوم
+                                    المقررة حسب الاتفاق.
+                                </li>
+                                <li>للطالب الحق في تقديم طلب تعديل القسم والتخصص قبل استخراج البطاقة الجامعية بدون دفع
+                                    رسوم التحويل وإذا أراد التحويل بعد استخراج البطاقة لابد من دفع الرسوم المقررة.
+                                </li>
+                                <li>أن يكون مجازا بالقرآن الكريم إذا تقدم لفرع القراءات.</li>
+                                <li>أن يكون حائزا على الشهادة الثانوية او ما يعادلها من المعاهد الشرعية أو إجازة بالقرآن
+                                    الكريم أو شهادة أكاديمية الإمام الأعظم أبي حنيفة النعمان رضي الله تعالى عنه.
+                                </li>
+                                <li>نظام الجامعة لا يسمح باسترداد الرسوم بعد تسجيل الطالب وحصوله على رقم الجامعي .</li>
+                                <li>للإدارة الحق في فصل أي طالب دون الرجوع إلى جهة أخرى اذا أخل بالأنظمة أو أتى بمخالفة
+                                    شرعية أو أخل بالأدب مع أحد المدرسين او الطلبة.
+                                </li>
+                                <li>لا تسترد الرسوم للطالب بأي حال من الأحوال، إلا إذا كان السبب خاصا بالجامعة.</li>
+                                <li>يُمنع طرح أي سؤال، أو الحديث عن أي موضوع يتعلق بجماعة أو شخصية سياسية، أو خلافية بين
+                                    المسلمين، مما يثير الخلاف بين أفراد المسلمين. ومن يقوم بهذه المخالفة فإنه يعرض نفسه
+                                    للعقوبة التي تراها إدارة الجامعة مناسبة، وربما الفصل من الجامعة، من غير أي تعويض، أو
+                                    رد لما دفعه من رسوم .
+                                </li>
+                                <li>يمكن للطالب طلب بدل فاقد لشهادته الأصلية برسوم إضافية.</li>
+                                <li>الجامعة تتحمل أي تعديل عن الأخطاء الناتجة عنها.</li>
+                                <li>الطريقة الوحيدة للتواصل مع الطالب وحفظا لحقوقه هو التواصل بخطابات رسمية عن طريق
+                                    البريد الإلكتروني المعتمد للطالب في الجامعة في نموذج قسم التسجيل وكل اتفاق غير مدون
+                                    في البريد الإلكتروني يعتبر لاغي ولا قيمة له عند الإدارة.
+                                </li>
+                            </ol>
+                            <br>
+                            <div class="custom-control custom-checkbox my-4 text-center">
+                                <input type="checkbox" class="custom-control-input" id="conditions" required>
+                                <label class="custom-control-label" for="conditions">قرأت شروط التسجيل ووافقت
+                                    عليها</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5 justify-content-center">
+                        <div class="col-md-3">
+                            <button id="registration-btn" class="btn btn-warning btn-lg btn-block" type="submit" disabled>التسجيل</button>
+                        </div>
+                    </div>
+
+                    <p class="mt-5 mb-3 text-muted text-center mb-5">&copy; جامعة الإمام الأعظم أبي حنيفة النعمان. </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function updateFileLabel(inputId) {
+        var input = document.getElementById(inputId);
+        var label = input.nextElementSibling;
+        var fileName = input.files[0].name;
+        label.innerHTML = '<p class="mr-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + fileName + '</p>' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;اختر ملفاً';
+    }
+    document.getElementById("conditions").addEventListener("change", function() {
+        var registrationBtn = document.getElementById("registration-btn");
+        registrationBtn.disabled = !this.checked;
+    });
+</script>
 
 {% endblock %}
+

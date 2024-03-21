@@ -29,7 +29,7 @@ class BaseChoiceFormSet(BaseInlineFormSet):
             if form.cleaned_data.get('is_correct'):
                 num_correct_choices += 1
         if num_correct_choices != 1:
-            raise ValidationError("Exactly one choice must be marked as correct.")
+            raise ValidationError("يجب تحديد سؤال واحد فقط كصحيح")
 
 
 ChoiceFormSet = inlineformset_factory(
@@ -72,4 +72,5 @@ class ExamSubmissionForm(forms.Form):
             question_text = exam_question.question.question_text
             self.fields[f'question_{exam_question.id}'] = forms.ChoiceField(label=question_text,
                                                                             choices=choices,
-                                                                            widget=forms.RadioSelect)
+                                                                            widget=forms.RadioSelect,
+                                                                            required=False)

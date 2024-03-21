@@ -17,9 +17,9 @@ class Migration(migrations.Migration):
             name='photo',
             field=models.ImageField(blank=True, upload_to=accounts.models.user_profile_photo_path, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])], verbose_name='الصورة الشخصية'),
         ),
-        migrations.AlterField(
-            model_name='document',
-            name='document',
-            field=models.FileField(upload_to=accounts.models.user_directory_path, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['txt', 'pdf', 'docx', 'pptx', 'xls'])], verbose_name='المستند'),
-        ),
+        #migrations.AlterField(
+        #    model_name='document',
+        #    name='document',
+        #    field=models.FileField(upload_to=accounts.models.user_directory_path, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['txt', 'pdf', 'docx', 'pptx', 'xls'])], verbose_name='المستند'),
+        #),
     ]

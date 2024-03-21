@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}الامتحان غير نشط{% endblock %}
+{% block content %}
+    <div class="jumbotron text-center" style="background-color: #f8d7da; color: #721c24;">
+        <div class="container">
+           <h1>الامتحان غير نشط</h1>
+            <h3>يمكن الوصول للامتحان فقط خلال الفترة المحددة {{scheduled_datetime}}</h3>
+        </div>
+    </div>
+<br>
+{% endblock %}

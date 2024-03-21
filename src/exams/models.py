@@ -1,6 +1,6 @@
 from accounts.models import Instructor, Student
 from django.db import models
-from courses.models import Course, Module, Subject
+from courses.models import Course, Module
 from django.utils import timezone
 
 
@@ -74,7 +74,8 @@ class Exam(models.Model):
         """
         Method to check if the exam is accessible based on its scheduled datetime.
         """
-        return timezone.now() < self.scheduled_datetime + timezone.timedelta(minutes=self.duration_minutes)
+        now = timezone.now()
+        return self.scheduled_datetime <= now < self.scheduled_datetime + timezone.timedelta(minutes=self.duration_minutes + 1)
 
 
 class ExamQuestion(models.Model):
@@ -120,4 +121,3 @@ class StudentAnswer(models.Model):
     class Meta:
         verbose_name = 'إجابة الطالب'
         verbose_name_plural = 'إجابات الطلاب'
-

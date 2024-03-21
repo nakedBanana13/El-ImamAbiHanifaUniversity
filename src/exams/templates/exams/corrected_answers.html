@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load custom_tags %}
 {% block title %}نتيجة الامتحان{% endblock %}
 
 {% block content %}
@@ -7,7 +7,7 @@
         <h1 class="mt-4 mb-3">النتيجة</h1>
         <ul class="list-group">
             {% for answer in answered_questions %}
-                {% if answer.selected_choice == answer.exam_question.correct_choice %}
+                {% if answer.selected_choice == correct_answers|get_dict_value:answer.exam_question.id %}
                     <li class="list-group-item correct-answer">
                 {% else %}
                     <li class="list-group-item incorrect-answer">

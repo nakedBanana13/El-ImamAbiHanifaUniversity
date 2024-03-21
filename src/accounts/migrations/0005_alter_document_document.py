@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='document',
-            name='document',
-            field=models.FileField(upload_to=accounts.models.user_directory_path),
-        ),
+        #migrations.AlterField(
+        #    model_name='document',
+        #    name='document',
+        #    field=models.FileField(upload_to=accounts.models.user_directory_path),
+        #),
     ]

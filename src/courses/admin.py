@@ -37,4 +37,4 @@ class ModuleAdmin(admin.ModelAdmin):
     list_display = ['course', 'title', 'description', 'is_active', 'order']
     list_filter = ['course',]
     search_fields = ['title', 'description']
-    search_help_text = 'Search by title, description'
+    search_help_text = 'ابحث عن طريق العنوان أو الشرح'

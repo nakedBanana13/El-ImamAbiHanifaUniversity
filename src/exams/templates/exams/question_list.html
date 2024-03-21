@@ -4,11 +4,13 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="mt-4 mb-3 text-center">بنك الأسئلة لدورة {{ course.title}}</h1>
+    <h1 class="mt-4 mb-3 text-center">بنك الأسئلة لدورة {{ course.title }}</h1>
+    <h3 class="mt-4 mb-3 text-center">عدد الأسئلة: {{ questions.count }} </h3>
+    {% if questions %}
     <ul class="list-group">
         {% for question in questions %}
             <li class="list-group-item">
-                {{ question.question_text }}
+                {{ question.question_text }} (من الوحدة {{ question.module.title }})
                 <ul class="list-group mt-2">
                     {% for choice in question.choices.all %}
                         <li class="list-group-item">
@@ -26,7 +28,14 @@
         <br>
         {% endfor %}
     <a href="{% url 'generate_exam_from_question_bank' question_bank_id=question_bank_id %}" class="btn btn-success mt-3">إنشاء امتحان <i class="fas fa-tasks"></i></a>
+        {% else %}
+    <h3>بنك الأسئلة فارغ</h3>
     </ul>
+
+    {% endif %}
+    <a href="{% url 'manage_course_list' %}" class="btn btn-secondary">الرجوع إلى دوراتي</a>
+    <br>
     <a href="{% url 'question_add' question_bank_id=question_bank_id %}"><div class="add-content-button" id="addContentButton"><i class="fa-solid fa-plus"></i></div></a>
 </div>
+<br>
 {% endblock %}

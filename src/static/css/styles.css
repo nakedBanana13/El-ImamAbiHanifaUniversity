@@ -24,7 +24,7 @@ img{
 /*------- end navbar----------- */
 
 #content {
-    margin: 7rem 0;
+    margin-top: 5rem;
 }
 
 .green-jumbotron {
@@ -101,6 +101,14 @@ img{
   z-index: 1000;
 }
 
+.status-circle {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+    }
+
+
 .create-course-link {
   display: flex;
   align-items: center;
@@ -126,7 +134,6 @@ form p input[type="email"],
 form p input[type="password"],
 form p input[type="url"],
 form p input[type="number"],
-form p input[type="checkbox"],
 form p input[type="radio"],
 form p input[type="datetime-local"],
 form p textarea,
@@ -142,6 +149,9 @@ form p select {
     border: 1px solid #ced4da;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+form p input[type="checkbox"] {
+    margin-top: 5px;float: right;
 }
 
 
@@ -248,6 +258,56 @@ form p input[type="file"]:hover {
             background-color: #f8d7da !important;
         }
 
+ul.messages {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.messages li {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+ul.messages li.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+ul.messages li.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+ul.messages li.warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+ul.messages li.info {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+a.close {
+  float: right;
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}
+
+a.close:hover {
+  color: #999;
+}
+
+.active-color {
+        color: #28a745;
+    }
+
+    .inactive-color {
+        color: #dc3545;
+    }
 
 /* start slides */
 .sld{
@@ -326,6 +386,10 @@ form p input[type="file"]:hover {
     .p-slide{
         font-size: 0.7em;
     }
+
+    .social-icons-row {
+        margin-top: 5rem;
+    }
 }
 @media screen and (max-width:320px){
     .title-slide{
@@ -334,6 +398,9 @@ form p input[type="file"]:hover {
     }
     .p-slide{
         font-size: 0.5em;
+    }
+    .social-icons-row{
+        margin-top: 5rem;
     }
 }
 
@@ -468,6 +535,9 @@ form p input[type="file"]:hover {
     .subscribe-item .form button{
         width: 40%;
     }
+    .social-icons-row {
+        margin-top: 5rem;
+    }
 }
 
 @media screen and (max-width:576px){
@@ -492,6 +562,9 @@ form p input[type="file"]:hover {
     }
     .subscribe-item .form button{
         width: 100%;
+    }
+    .social-icons-row {
+        margin-top: 5rem;
     }
 }
 /* ------------ end main --------------- */
