@@ -90,12 +90,24 @@ WSGI_APPLICATION = 'ElImamAbiHanifaUniversity.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'abihanifahuniver_DB',
+        'USER': 'abihanifahuniver_DB13',
+        'PASSWORD': 'j}5cF$)dk;nL',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
+
 
 
 
@@ -179,8 +191,8 @@ LOGOUT_REDIRECT_URL = '/account/login/'
 TIME_ZONE = 'Africa/Cairo'
 
 # Celery configuration
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost'
+CELERY_RESULT_BACKEND = 'rpc://'
 
 # Celery Beat configuration
 CELERY_BEAT_SCHEDULE = {

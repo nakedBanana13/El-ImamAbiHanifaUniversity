@@ -22,6 +22,7 @@ def student_id_photo_path(instance, filename):
 
 
 class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
     is_approved = models.BooleanField(default=False, verbose_name='موافق عليه')
     is_active = models.BooleanField(default=True, verbose_name='نشط')
     is_student = models.BooleanField(default=True, verbose_name='طالب')
