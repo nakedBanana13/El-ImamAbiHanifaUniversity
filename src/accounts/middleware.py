@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import logout
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
@@ -24,7 +23,8 @@ class DocumentAccessMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.path.startswith(settings.MEDIA_URL):
+        MEDIA_URL = '/media/'
+        if request.path.startswith(MEDIA_URL):
             user = request.user
             if not user.is_superuser:
                 # Extract document type from URL
