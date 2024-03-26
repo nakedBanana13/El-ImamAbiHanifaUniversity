@@ -28,12 +28,12 @@ class DocumentAccessMiddleware:
             user = request.user
             if not user.is_superuser:
                 # Extract document type from URL
-                document_type = request.path.split('/')[-2]
-                if document_type not in ['certificates', 'ids']:
+                document_type = request.path.split('/')[-3]
+                if document_type in ['certificates', 'ids']:
                     return HttpResponseForbidden("Access Forbidden")
 
                 # Extract username from URL
-                username = request.path.split('/')[-3]
+                username = request.path.split('/')[-2]
                 if username != user.username:
                     return HttpResponseForbidden("Access Forbidden")
         return self.get_response(request)

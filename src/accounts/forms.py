@@ -84,9 +84,14 @@ class StudentRegistrationForm(forms.ModelForm):
         domain = email.split('@')[-1]
         allowed_domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'protonmail.com',
                            'mail.com', 'yandex.com']
+        user_id = self.instance.user.id if self.instance.user else None
+        existing_user = CustomUser.objects.exclude(id=user_id).filter(email=email).exists()
+        if existing_user:
+            raise ValidationError("عنوان البريد الإلكتروني هذا مستخدم بالفعل.")
         if domain not in allowed_domains:
             allowed_domains_str = ', '.join(allowed_domains)
             raise ValidationError(f"عذرًا، لتسجيل فقط باستخدام مزودي البريد الإلكتروني التالية: {allowed_domains_str}.")
+
         return email
 
     def clean_phone_number(self):
