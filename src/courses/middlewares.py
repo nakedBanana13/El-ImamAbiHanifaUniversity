@@ -35,5 +35,10 @@ class ExamAccessMiddleware:
                         exams = module.exams.filter(lock_course_during_exam=True)
                         for exam in exams:
                             if exam.is_accessible():
+                                course.is_exam_active = True
+                                course.save()
                                 return render(request, 'exams/locked_during_exam.html')
+                            else:
+                                course.is_exam_active = False
+                                course.save()
         return response
