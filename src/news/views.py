@@ -24,7 +24,7 @@ def contact_us(request):
                 subject,
                 message,
                 settings.EMAIL_HOST_USER,  # From
-                settings.EMAIL_HOST_USER,  # To
+                [settings.EMAIL_HOST_USER],  # To
                 reply_to=[email],
             )
             email_message.send(fail_silently=False)
