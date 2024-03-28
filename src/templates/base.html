@@ -175,8 +175,7 @@
 <script src="{% static 'js/script.js' %}"></script>
 <script>
     function scrollToBottom() {
-            const bottomElement = document.documentElement;
-            bottomElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
     $(document).ready(function () {
 
