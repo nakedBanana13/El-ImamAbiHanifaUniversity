@@ -23,7 +23,7 @@ def contact_us(request):
                 subject,
                 message,
                 email,  # From
-                ['your@example.com'],  # To
+                ['abihanifah2022univer@gmail.com'],  # To
                 fail_silently=False,
             )
 

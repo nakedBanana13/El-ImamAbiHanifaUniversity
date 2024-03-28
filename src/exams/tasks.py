@@ -2,7 +2,6 @@ from celery import shared_task, current_app
 from accounts.models import Student, CustomUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
-from django.core.management import BaseCommand, call_command
 from django.db import transaction
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -23,12 +22,16 @@ def schedule_exam_task(exam_id):
         if exam.emails_sent:
             return
         enrolled_students = Student.objects.filter(courses_joined__id=exam.modules.first().course.id)
+        course = exam.modules.first().course
+        faculty = course.faculty
+        subject = course.subject
+        study_year = course.study_year
         for student in enrolled_students:
             token = get_random_string(length=32)
             ExamToken.objects.create(exam=exam, token=token, student_email=student.user.email)
-            exam_link = f"http://domain.com/exam/{token}"
-            subject = "Exam"
-            message = render_to_string('exams/exam_email.html', {'exam_link': exam_link})
+            exam_link = f"https://abi-hanifah-university.net/exam/take/{token}"
+            subject = f"اختبار {subject}"
+            message = render_to_string('exams/exam_email.html', {'exam_link': exam_link, 'faculty': faculty, 'subject': subject, 'study_year': study_year})
             try:
                 send_mail(subject, message, 'university@email.com', [student.user.email], fail_silently=False)
                 logger.info(f"Email sent successfully to {student.user.email} for exam ID: {exam_id}")
@@ -45,21 +48,21 @@ def schedule_exam_task(exam_id):
 def perform_periodic_exam_actions(exam_id):
     try:
         exam = Exam.objects.get(id=exam_id)
+        course = exam.modules.first().course
         if not exam.is_accessible():
             # If the exam is not accessible anymore, revoke the task
             current_app.control.revoke(schedule_exam_task.request.id)
+        else:
             if exam.lock_course_during_exam:
-                exam.modules.first().course.is_exam_active = True
+                course.is_exam_active = True
                 exam.save()
 
         if timezone.now() >= exam.scheduled_datetime + timezone.timedelta(minutes=exam.duration_minutes):
+            course.is_exam_active = False
             # Exam time is up, automatically submit the exam for all students
             for exam_token in ExamToken.objects.filter(exam=exam, used=False):
                 exam_token.used = True
                 submit_exam_automatically(exam_token.student_email, exam_token)
-                if exam.lock_course_during_exam:
-                    exam.modules.first().course.is_exam_active = False
-                    exam.save()
 
     except Exam.DoesNotExist:
         pass

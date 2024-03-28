@@ -99,7 +99,11 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         # Call the parent class's get_success_url method to get the default URL
+        redirect_to = self.request.GET.get('next')
+        if redirect_to:
+            return redirect_to
         success_url = super().get_success_url()
+
 
         # Retrieve the authenticated user
         user = self.request.user

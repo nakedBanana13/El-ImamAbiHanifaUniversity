@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="body-form bg-white mt-5">
-    <form class="form-signin text-center" action="{% url 'login' %}" method="post">
+    <form class="form-signin text-center" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
         {% csrf_token %}
         <img class="mb-4" src="{% static 'images/logo.png' %}" alt="" width="72" height="72">
         <h1 class="h3 mb-3 font-weight-normal">تسجيل الدخول</h1>
