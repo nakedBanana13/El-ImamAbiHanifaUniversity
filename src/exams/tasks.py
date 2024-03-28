@@ -1,4 +1,5 @@
 from celery import shared_task, current_app
+from celery import current_task
 from accounts.models import Student, CustomUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
@@ -38,6 +39,7 @@ def schedule_exam_task(exam_id):
             except Exception as e:
                 logger.error(f"Failed to send email to {student.user.email} for exam ID: {exam_id}. Error: {e}")
         exam.emails_sent = True
+        exam.task_id = current_task.request.id
         exam.save()
         perform_periodic_exam_actions.apply_async(args=[exam_id])
     except Exam.DoesNotExist:
@@ -48,17 +50,11 @@ def schedule_exam_task(exam_id):
 def perform_periodic_exam_actions(exam_id):
     try:
         exam = Exam.objects.get(id=exam_id)
-        course = exam.modules.first().course
         if not exam.is_accessible():
             # If the exam is not accessible anymore, revoke the task
             current_app.control.revoke(schedule_exam_task.request.id)
-        else:
-            if exam.lock_course_during_exam:
-                course.is_exam_active = True
-                exam.save()
 
         if timezone.now() >= exam.scheduled_datetime + timezone.timedelta(minutes=exam.duration_minutes):
-            course.is_exam_active = False
             # Exam time is up, automatically submit the exam for all students
             for exam_token in ExamToken.objects.filter(exam=exam, used=False):
                 exam_token.used = True

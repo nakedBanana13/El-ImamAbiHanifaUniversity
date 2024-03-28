@@ -80,7 +80,7 @@
                   <a class="dropdown-item text-right" href="{% url 'under_construction' %}">الدبلومات</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link ml-3" href="#">تواصل معنا</a>
+                <a class="nav-link ml-3" href="#" onclick="scrollToBottom()">تواصل معنا</a>
               </li>
               {% if request.user.is_authenticated %}
                 <li class="nav-item">
@@ -175,6 +175,10 @@
 <script src="{% static 'js/script.js' %}"></script>
 <script>
     $(document).ready(function () {
+        function scrollToBottom() {
+            const bottomElement = document.documentElement;
+            bottomElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
 
         {% block domready %}
 

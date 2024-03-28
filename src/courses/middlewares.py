@@ -29,8 +29,8 @@ class ExamAccessMiddleware:
         if request.user and request.user.is_authenticated and not request.user.is_superuser and request.user.is_student:
             if request.path.startswith('/student/'):
                 # Check if an exam is active for any of the user's enrolled courses
-                enrolled_courses = request.user.student_profile.courses_joined.all()
-                for course in enrolled_courses:
-                    if course.is_exam_active:
+                exams = request.user.student_profile.courses_joined.modules.exams.filter(lock_course_during_exam=True)
+                for exam in exams:
+                    if exam.is_accessible():
                         return render(request, 'exams/locked_during_exam.html')
         return response

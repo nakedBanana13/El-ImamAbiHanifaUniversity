@@ -58,6 +58,7 @@ class Exam(models.Model):
     emails_sent = models.BooleanField(default=False, verbose_name='تم إرسال البريد الإلكتروني')
     total_marks = models.PositiveIntegerField(verbose_name='العلامة')
     lock_course_during_exam = models.BooleanField(default=False, verbose_name='قفل الدروس خلال الامتحان')
+    task_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "امتحان"

@@ -210,10 +210,7 @@ class CreateExamFromQuestionBankView(LoginRequiredMixin, PermissionRequiredMixin
         self.selected_questions_ids = []
 
     def get_success_url(self):
-        question_bank_id = self.kwargs.get('question_bank_id')
-        question_bank = get_object_or_404(QuestionBank, pk=question_bank_id)
-        course_id = question_bank.course.id
-        return reverse_lazy('question_list', kwargs={'course_id': course_id})
+        return reverse_lazy('manage_course_list')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
