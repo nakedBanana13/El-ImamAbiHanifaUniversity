@@ -1,5 +1,5 @@
-from django.contrib import messages
-from django.core.mail import send_mail
+from django.conf import settings
+from django.core.mail import EmailMessage
 from django.shortcuts import render
 from django.views.generic import ListView
 from news.models import NewsItem
@@ -19,13 +19,15 @@ def contact_us(request):
         message = request.POST.get('message')
 
         if email and message and subject:
-            send_mail(
+            message += f"\n\nبريد المرسل: {email}"
+            email_message = EmailMessage(
                 subject,
                 message,
-                email,  # From
-                ['abihanifah2022univer@gmail.com'],  # To
-                fail_silently=False,
+                settings.EMAIL_HOST_USER,  # From
+                settings.EMAIL_HOST_USER,  # To
+                reply_to=[email],
             )
+            email_message.send(fail_silently=False)
 
             return render(request, 'news/email_recieved.html')
         else:
