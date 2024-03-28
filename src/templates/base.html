@@ -80,7 +80,7 @@
                   <a class="dropdown-item text-right" href="{% url 'under_construction' %}">الدبلومات</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link ml-3" href="#" onclick="scrollToBottom()">تواصل معنا</a>
+                <a class="nav-link ml-3" href="#" onclick="scrollToBottom(event)">تواصل معنا</a>
               </li>
               {% if request.user.is_authenticated %}
                 <li class="nav-item">
@@ -119,7 +119,7 @@
 
 <!-- start Footer -->
 
-    <footer class="section">
+    <footer id="footer" class="section">
   <div class="container">
     <div class="row">
       <div class="col-md-5 col-12 middle-foot">
@@ -174,8 +174,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
 <script src="{% static 'js/script.js' %}"></script>
 <script>
-    function scrollToBottom() {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    function scrollToBottom(event) {
+        event.preventDefault();
+            const footer = document.getElementById('footer');
+            footer.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
     $(document).ready(function () {
 
