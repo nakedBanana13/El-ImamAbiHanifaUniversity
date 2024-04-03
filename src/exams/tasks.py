@@ -34,7 +34,7 @@ def schedule_exam_task(exam_id):
             subject = f"اختبار {subject}"
             message = render_to_string('exams/exam_email.html', {'exam_link': exam_link, 'faculty': faculty, 'subject': subject, 'study_year': study_year})
             try:
-                send_mail(subject, message, 'university@email.com', [student.user.email], fail_silently=False)
+                send_mail(subject, message, 'exams@abi-hanifah-university.net', [student.user.email], fail_silently=False, auth_user='exams@abi-hanifah-university.net', auth_password='XK?Hna}g68+ke')
                 logger.info(f"Email sent successfully to {student.user.email} for exam ID: {exam_id}")
             except Exception as e:
                 logger.error(f"Failed to send email to {student.user.email} for exam ID: {exam_id}. Error: {e}")

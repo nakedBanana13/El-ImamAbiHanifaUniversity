@@ -22,11 +22,10 @@ def contact_us(request):
         message = request.POST.get('message')
 
         if email and message and subject:
-            message += f"\n\nبريد المرسل: {email}"
             email_message = EmailMessage(
                 subject,
                 message,
-                settings.EMAIL_HOST_USER,  # From
+                email,  # From
                 [settings.EMAIL_HOST_USER],  # To
                 reply_to=[email],
             )
