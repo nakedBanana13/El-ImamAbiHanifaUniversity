@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}حذف إعلان{% endblock %}
+{% block content %}
+<br>
+<div class="container">
+    <h1 class="text-center">تأكيد الحذف</h1>
+    <div class="alert alert-danger">
+    <p>هل أنت متأكد أنك تريد حذف الإعلان "{{ object.content }}"؟</p>
+    </div>
+    <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <button type="submit" class="btn btn-secondary" name="cancel">إلغاء</button>
+        <button type="submit" class="btn btn-danger">تأكيد</button>
+      </div>
+</form>
+      </div>
+{% endblock %}

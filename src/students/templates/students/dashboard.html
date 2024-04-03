@@ -3,23 +3,48 @@
 {% block title %}صفحة الطالب{% endblock %}
 
 {% block content %}
-   <p>
+<p>
     <a class="btn btn-primary" href="{% url 'student_edit' %}">
-        <i class="fas fa-edit"></i>تعديل بياناتي
+        <i class="fas fa-edit"></i> تعديل بياناتي
     </a>
 </p>
 
-
-   <h1 class="text-center">موادي</h1>
 <section class="section">
-      <div class="container">
-<div class="col-12 mb-5">
-    {% for course in object_list %}
-    <div class="list-group list-group-horizontal text-center">
-        <a href="{% url 'student_course_details' course.id %}" class="list-group-item list-group-item-action">{{ course.title }}</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="col-12 mb-5">
+                    <h1 class="text-center">موادي</h1>
+                    {% for course in object_list %}
+                    <div class="list-group list-group-horizontal text-center">
+                        <a href="{% url 'student_course_details' course.id %}" class="list-group-item list-group-item-action">{{ course.title }}</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header text-center">
+                        لوحة الإعلانات
+                    </div>
+                    <ul class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                        {% for course in object_list %}
+                            {% for announcement in course.announcements.all %}
+                                <li class="list-group-item">
+                                    <h5><strong>{{ announcement.course.title }}</strong></h5>
+                                    {{ announcement.content }}
+                                    <br>
+                                    {{ announcement.created_at }}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">لا يوجد إعلانات حالياً</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endfor %}
-</div>
-      </div>
-    </section>
- {% endblock %}
+</section>
+<br>
+{% endblock %}

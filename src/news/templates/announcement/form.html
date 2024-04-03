@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{% if is_create_form %} إنشاء {% else %} تعديل {% endif %} إعلان{% endblock %}
+{% block content %}
+<br>
+<section class="section">
+      <div class="container">
+           <div class="col-12 mb-5">
+    <h1 class="text-center">{% if is_create_form %} إنشاء {% else %} تعديل {% endif %} إعلان</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <a href="{% url 'announcement_list' %}" class="btn btn-secondary">العودة إلى قائمة الإعلانات</a>
+        <button class="btn btn-success" type="submit">حفظ <i class="fa-regular fa-floppy-disk"></i></button>
+    </form>
+               <br>
+           </div>
+      </div>
+ </section>
+{% endblock %}

@@ -109,6 +109,7 @@
                 <br>
                 -ليس لدينا علاقة بأي جماعة فكرية، أوجهة سياسية، أو حزبية.
               </p>
+                <a  href="{% url 'who_are_we' %}" class="btn btn-warning mt-4">قراءة المزيد </a>
             </div>
           </div>
 
@@ -280,7 +281,11 @@
           <br>
            بالإضافة لبرامج الدبلوم العالي والماجستير والدكتوراة
         </p>
-
+        {% if not request.user.is_authenticated %}
+          <div class="text-center">
+            <a href="{% url 'register' %}" class="btn btn-warning px-4 py-2">التسجيــل</a>
+          </div>
+        {% endif %}
       </div>
     </section>
     <!-- end suscribe -->

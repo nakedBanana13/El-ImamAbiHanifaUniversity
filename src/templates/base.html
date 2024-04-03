@@ -121,8 +121,8 @@
 
     <footer id="footer" class="section">
   <div class="container">
-    <div class="row">
-      <div class="col-md-5 col-12 middle-foot">
+      <div class="row">
+      <div class="col-md-4 col-12 middle-foot">
         <h2 class="text-warning mt-2">تواصل معنا</h2> <br>
         <form  method="post" class="contact-us-form" action="{% url 'contact_us' %}">
 {% csrf_token %}
@@ -140,31 +140,57 @@
         </form>
       </div>
 
-      <div class="col-md-1 col-12 middle-foot">
-        <!-- Empty column for spacing -->
-      </div>
 
-      <div class="col-md-5 col-12 middle-foot">
+      <div class="col-md-4 col-12 middle-foot">
         <h2 class="text-warning mt-2">روابط هامة</h2> <br>
         <a href="#" class="important-a"><p>أكاديمية الإمام الأعظم أبي حنيفة النعمان</p></a>
         <a href="#" class="important-a"><p>منصـة الإمام الأعظم أبي حنيفة النعمان</p></a>
         <a href="#" class="important-a"><p>مجلة أمةً وسطاً</p></a>
         <a href="#" class="important-a"><p>الدبلومات</p></a>
       </div>
+
+
+           <div class="col-md-4 col-12 middle-foot">
+            <h3 class="text-warning mt-2">رئيس الجامعة</h3> <br>
+            <p class="text-white footer-text-left"> الاسم : <a  href="{% url 'dr_osama_abrash' %}">أسامة محمد سميح الأبرش</a> مواليد ١٩٦٧ سوريا المتمتع بالجنسية السودانية. المشرف العام على مجمع الإمام الأعظم أبي حنيفة النعمان رضي الله تعالى عنه ورئيس الجامعة.
+               ماجستير في التخدير والإنعاش من جامعة دمشق.
+              ليسانس بالدراسات الإسلامية من جامعة الأزهر الشريف كلية الشريعة والقانون .
+              إجازة برواية حفص عن عاصم من جامعة القرآن الكريم الخرطوم.
+               بعض الإجازات بكتب الحديث والفقه وأصوله والعقيدة وغيرها إمام وخطيب سابقا. </p>
+          </div>
     </div>
 
+
     <div class="row social-icons-row">
-      <div class="col-12">
+    <div class="col-md-8">
         <div class="social-icons mb-2">
-          <p class="text-white">تابعونا على مواقع التواصل الاجتماعي </p>
-          <a href="https://web.facebook.com/people/%D8%AC%D8%A7%D9%85%D8%B9%D8%A9-%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D9%85-%D8%A7%D9%84%D8%A3%D8%B9%D8%B8%D9%85-%D8%A3%D8%A8%D9%8A-%D8%AD%D9%86%D9%8A%D9%81%D8%A9-%D8%A7%D9%84%D9%86%D8%B9%D9%85%D8%A7%D9%86-%D8%B1%D8%B6%D9%8A-%D8%A7%D9%84%D9%84%D9%87-%D8%AA%D8%B9%D8%A7%D9%84%D9%89-%D8%B9%D9%86%D9%87/100075990244751/"> <i class="fab fa-facebook"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="https://www.youtube.com/@imamabuhanifaal-numanacademy"> <i class="fab fa-youtube"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="https://wa.me/00249968605830"> <i class="fab fa-whatsapp"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="{% url 'under_construction' %}"> <i class="fab fa-telegram"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="{% url 'under_construction' %}"> <i class="fab fa-linkedin"></i></a>
+            <p class="text-white">تابعونا على مواقع التواصل الاجتماعي</p>
+            <a href="https://web.facebook.com/people/%D8%AC%D8%A7%D9%85%D8%B9%D8%A9-%D8%A7%D9%84%D8%A5%D9%85%D8%A7%D9%85-%D8%A7%D9%84%D8%A3%D8%B9%D8%B8%D9%85-%D8%A3%D8%A8%D9%8A-%D8%AD%D9%86%D9%8A%D9%81%D8%A9-%D8%A7%D9%84%D9%86%D8%B9%D9%85%D8%A7%D9%86-%D8%B1%D8%B6%D9%8A-%D8%A7%D9%84%D9%84%D9%87-%D8%AA%D8%B9%D8%A7%D9%84%D9%89-%D8%B9%D9%86%D9%87/100075990244751/">
+                <i class="fab fa-facebook"></i>
+            </a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://www.youtube.com/@imamabuhanifaal-numanacademy">
+                <i class="fab fa-youtube"></i>
+            </a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://wa.me/00249968605830">
+                <i class="fab fa-whatsapp"></i>
+            </a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'under_construction' %}">
+                <i class="fab fa-telegram"></i>
+            </a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'under_construction' %}">
+                <i class="fab fa-linkedin"></i>
+            </a>
         </div>
-      </div>
     </div>
+    <div class="col-md-4 col-12 developed-by-row">
+        <div class="social-icons mb-2 developed-by">
+            <a href="https://www.facebook.com/sila4adv"><p class="text-white">تم التطوير بواسطة صِلة<i class="icon"><img src="{% static 'icons/silah.ico' %}" alt="silah logo"></i></p></a>
+        </div>
+    </div>
+</div>
+
+  </div>
+
 </footer>
 
     <!-- end Footer -->

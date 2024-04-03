@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}الإعلانات{% endblock %}
+{% block content %}
+<br>
+ <section class="section">
+      <div class="container">
+           <div class="col-12 mb-5">
+    <h1 class="text-center">الإعلانات</h1>
+    <ul id="modules" class="list-group">
+        {% for announcement in announcements %}
+            <li class="list-group-item">
+                <h5><strong>{{ announcement.course.title }}</strong></h5>
+                {{ announcement.content }}
+                <br>
+
+                        <a class="btn btn-outline-secondary" href="{% url 'announcement_update' announcement.pk %}"><i class="fa-regular fa-pen-to-square"></i></a>
+                        <a class="btn btn-outline-danger" href="{% url 'announcement_delete' announcement.pk %}"><i class="fa-solid fa-trash"></i></a>
+                <br>
+                {{ announcement.created_at }}
+            </li>
+        {% empty %}
+            <li>لا توجد إعلانات</li>
+        {% endfor %}
+    </ul>
+               <br>
+               <a href="{% url 'manage_course_list' %}" class="btn btn-secondary">الرجوع إلى دوراتي</a>
+               <a href="{% url 'announcement_create' %}" class="btn btn-primary">إنشاء إعلان</a>
+    <br>
+           </div>
+      </div>
+ </section>
+{% endblock %}

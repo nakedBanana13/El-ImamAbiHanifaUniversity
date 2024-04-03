@@ -10,7 +10,7 @@ class ChoiceInline(admin.TabularInline):
 @admin.register(QuestionBank)
 class QuestionBankAdmin(admin.ModelAdmin):
     list_display = ('id', 'course', 'owner', 'created', 'updated')
-    list_filter = ('course', 'owner', 'created', 'updated')
+    list_filter = ('course', 'created', 'updated')
     search_fields = ('course__title', 'owner__username')
     search_help_text = 'البحث حسب عنوان الدورة، اسم مُنشئ الدورة'
 
@@ -58,6 +58,5 @@ class ExamTokenAdmin(admin.ModelAdmin):
 @admin.register(StudentAnswer)
 class StudentAnswerAdmin(admin.ModelAdmin):
     list_display = ['student', 'exam', 'exam_question', 'selected_choice', 'mark_obtained']
-    list_filter = ('exam', 'student')
-    search_fields = ('exam', 'student', 'exam_question')
+    list_filter = ('exam', )
     search_help_text = 'البحث حسب الامتحان، الطالب، سؤال الامتحان'

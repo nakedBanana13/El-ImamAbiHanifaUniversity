@@ -21,6 +21,20 @@ img{
     width: 58px;
 }
 
+.developed-by .icon {
+    margin-left: 5px;
+}
+.developed-by .a:hover {
+    color: #ffc527;
+    text-decoration-style: dotted;
+    text-decoration-color: #ffc527;
+}
+
+.developed-by .icon img {
+    max-height: 80px;
+    margin-right: -0.7rem;
+}
+
 /*------- end navbar----------- */
 
 #content {
@@ -376,6 +390,11 @@ a.close:hover {
     text-align: center;
 }
 
+.section .project__item .lead {
+    display: block;
+    text-align: left;
+}
+
 /* media slide text */
 
 @media screen and (max-width:768px){
@@ -390,6 +409,13 @@ a.close:hover {
     .social-icons-row {
         margin-top: 5rem;
     }
+    .developed-by-row {
+        margin-top: 5rem;
+    }
+
+    .section .project__item .lead {
+        font-size: 0.6em;
+    }
 }
 @media screen and (max-width:320px){
     .title-slide{
@@ -401,6 +427,13 @@ a.close:hover {
     }
     .social-icons-row{
         margin-top: 5rem;
+    }
+
+    .developed-by-row{
+        margin-top: 5rem;
+    }
+    .section .project__item .lead {
+        font-size: 0.6em;
     }
 }
 

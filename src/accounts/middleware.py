@@ -25,15 +25,18 @@ class DocumentAccessMiddleware:
     def __call__(self, request):
         MEDIA_URL = '/media/'
         if request.path.startswith(MEDIA_URL):
+            print(request.path)
             user = request.user
             if not user.is_superuser:
                 # Extract document type from URL
                 document_type = request.path.split('/')[-3]
+                print(document_type)
                 if document_type in ['certificates', 'ids']:
                     return HttpResponseForbidden("Access Forbidden")
 
                 # Extract username from URL
                 username = request.path.split('/')[-2]
+                print(username)
                 if username != user.username:
                     return HttpResponseForbidden("Access Forbidden")
         return self.get_response(request)

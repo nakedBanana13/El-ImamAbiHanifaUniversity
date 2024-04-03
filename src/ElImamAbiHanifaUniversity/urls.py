@@ -53,7 +53,8 @@ urlpatterns = [
     path('eulum/arabia/na7o', TemplateView.as_view(template_name='eulum/arabia/na7o.html'), name='na7o'),
     path('eulum/arabia/balagha', TemplateView.as_view(template_name='eulum/arabia/bala3\'a.html'), name='balagha'),
     path('contact/', contact_us, name='contact_us'),
-    path('underr_construction/', TemplateView.as_view(template_name='under_construction.html'), name='under_construction'),
+    path('under_construction/', TemplateView.as_view(template_name='under_construction.html'), name='under_construction'),
+    path('who_are_we/', TemplateView.as_view(template_name='who_are_we.html'), name='who_are_we'),
 ]
 
 if settings.DEBUG:

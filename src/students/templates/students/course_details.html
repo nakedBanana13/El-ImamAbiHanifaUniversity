@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+<br>
   <div class="container-fluid">
     <div class="row">
         <!-- Side Panel -->
@@ -12,7 +13,7 @@
             <div class="side-panel">
                 <ul id="modules" class="list-group">
                   <h3 class="text-center">الوحدات</h3>
-            {% for m in object.modules.all %}
+            {% for m in object.modules.all|dictsort:'order' %}
              {% if m.is_active %}
                 <li data-id="{{ m.id }}" {% if m == module %} class="list-group-item selected"{% else %} class="list-group-item"{% endif %}>
                     <div class="row">
@@ -51,5 +52,5 @@
         </div>
 
   </div>
-
+<br>
 {% endblock %}
